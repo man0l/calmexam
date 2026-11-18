@@ -1,6 +1,6 @@
 import type { PlanId, PlanOption } from '../types';
 
-export const ENTITLEMENT_ID = 'CalmExam Pro';
+export const ENTITLEMENT_ID = 'pro';
 export const TRIAL_DAYS = 7;
 
 export const DEFAULT_PLANS: PlanOption[] = [

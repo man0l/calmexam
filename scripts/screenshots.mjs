@@ -5,7 +5,7 @@ import { extname, join, resolve } from 'node:path';
 
 const DIST = resolve(process.env.DIST_DIR ?? 'dist');
 const OUT = resolve(process.env.OUT_DIR ?? 'web/assets/screens');
-const SCREENS = (process.env.SCREENS ?? 'exam,placement,plan,answer,explain,today,paywall').split(',');
+const SCREENS = (process.env.SCREENS ?? 'exam,date,placement,plan,answer,explain,today,paywall').split(',');
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.svg': 'image/svg+xml', '.json': 'application/json', '.ttf': 'font/ttf', '.woff2': 'font/woff2', '.ico': 'image/x-icon' };
 
 const server = createServer(async (req, res) => {

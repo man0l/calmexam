@@ -1,4 +1,5 @@
 import { StyleSheet, View } from 'react-native';
+import { Button } from '../../components/Button';
 import { ExamPicker } from '../../components/ExamPicker';
 import { OptionButton } from '../../components/OptionButton';
 import { Txt } from '../../components/Txt';
@@ -18,19 +19,16 @@ interface Props {
   onOpenOther: () => void;
   onSelectOther: (o: OtherExam) => void;
   onBack: () => void;
-  onNext: () => void;
 }
 
-export function ExamStep({ exam, otherOpen, otherExam, progress, onSelectExam, onOpenOther, onSelectOther, onBack, onNext }: Props) {
+export function ExamStep({ exam, otherOpen, otherExam, progress, onSelectExam, onOpenOther, onSelectOther, onBack }: Props) {
   if (otherOpen) {
     return (
       <StepLayout
         title="Which exam are you taking?"
-        subtitle="We will start you on SAT Math practice. The algebra, functions and statistics carry over, and we will let you know when your exam arrives."
+        subtitle="We will start you on SAT Math. The algebra, functions and statistics carry over, and we will tell you when your exam arrives."
         progress={progress}
         onBack={onBack}
-        onNext={onNext}
-        ctaDisabled={!otherExam}
       >
         <View style={styles.list}>
           {OTHER_EXAMS.map((o) => (
@@ -43,16 +41,14 @@ export function ExamStep({ exam, otherOpen, otherExam, progress, onSelectExam, o
   return (
     <StepLayout
       title="Which exam are you preparing for?"
-      subtitle="Practice is built around its topics and its scoring scale."
+      subtitle="Choose your exam. You can change it later in Settings."
       progress={progress}
       onBack={onBack}
-      onNext={onNext}
-      ctaDisabled={!exam}
     >
       <ExamPicker value={exam} onSelect={onSelectExam} />
       <View style={styles.other}>
-        <OptionButton label="My exam isn't listed" onPress={onOpenOther} />
-        <Txt variant="caption" color="inkMuted">
+        <Button label="My exam isn't listed" variant="ghost" compact onPress={onOpenOther} />
+        <Txt variant="caption" color="inkMuted" align="center">
           Tell us which one and we will prioritise it.
         </Txt>
       </View>
@@ -62,5 +58,5 @@ export function ExamStep({ exam, otherOpen, otherExam, progress, onSelectExam, o
 
 const styles = StyleSheet.create({
   list: { gap: spacing.md },
-  other: { marginTop: spacing.lg, gap: spacing.sm },
+  other: { marginTop: spacing.lg, gap: spacing.xs },
 });

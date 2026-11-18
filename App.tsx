@@ -37,7 +37,8 @@ const DEMO_STEPS: Partial<Record<DemoId, OnboardingStep>> = {
   onboarding: 'welcome',
   exam: 'exam',
   placement: 'placement',
-  plan: 'projection',
+  date: 'date',
+  plan: 'plan',
 };
 
 function demoSession(id: DemoId | undefined): SessionParams | undefined {

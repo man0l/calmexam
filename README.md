@@ -21,7 +21,14 @@ npm run web                 # or: npm start, then press i / a
 | `EXPO_PUBLIC_REVENUECAT_IOS_KEY` | RevenueCat App Store key. |
 | `EXPO_PUBLIC_REVENUECAT_TEST_STORE_KEY` | RevenueCat Test Store key, `__DEV__` builds only. |
 
-With no RevenueCat key, dev builds and web use a local billing stub so the paywall flow still works. Release builds without a key show "plans unavailable" instead of unlocking Pro. Entitlement id: `CalmExam Pro`; packages `ANNUAL` ($49.99) and `MONTHLY` ($7.99), 7-day trial.
+With no RevenueCat key, dev builds and web use a local billing stub so the paywall flow still works. Release builds without a key show "plans unavailable" instead of unlocking Pro. Entitlement `pro` (display name "CalmExam Pro"); current offering `default` with `$rc_annual` ($49.99) and `$rc_monthly` ($7.99), 7-day trial on both.
+
+### RevenueCat setup
+
+1. Create a RevenueCat project and a v2 secret key with project configuration read/write. Add it as the `REVENUECAT_SECRET_KEY` repo secret.
+2. Run the **RevenueCat setup** workflow (`.github/workflows/revenuecat-setup.yml`, wraps `scripts/revenuecat-setup.mjs`). It creates the App Store, Play Store and Test Store products (`calmexam_pro_annual` / `calmexam_pro_monthly`, Play `calmexam_pro:annual` / `calmexam_pro:monthly`), the `pro` entitlement and the `default` offering, then prints the public SDK keys. Re-running is safe.
+3. Add the printed keys as the `EXPO_PUBLIC_REVENUECAT_*` secrets above.
+4. Set the 7-day free trial and prices per store: App Store Connect introductory offer, Play base-plan free-trial offer, Test Store price in the RevenueCat dashboard.
 
 ## Scripts
 
@@ -43,8 +50,9 @@ Web only, ignored on native. Open `/?demo=<id>`. Each id resets local storage to
 |---|---|
 | `onboarding` | Onboarding from the welcome screen |
 | `exam` | Exam picker, SAT selected |
+| `date` | Exam date list with days left per sitting |
 | `placement` | Placement question 2 of 5, nothing chosen |
-| `plan` | Projection graph (with CalmExam vs on your own), SAT, 42 days left |
+| `plan` | Plan reveal: projection graph, daily load and focus topics, SAT, 42 days left |
 | `1` / `today` | Today tab: 42 days left, 5-day streak, goal ring 6/10 |
 | `practice` / `progress` / `settings` | That tab with demo progress |
 | `answer` | Practice session after a wrong answer: verified answer, steps, pitfalls |
