@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "calmexam",
+  // dist/worker.js is ONE self-contained ES module produced by build.mjs (esbuild),
+  // so wrangler uploads it as-is.
+  "main": "dist/worker.js",
+  "no_bundle": true,
+  "build": { "command": "node build.mjs" },
+  "compatibility_date": "2026-11-01",
+  "workers_dev": true,
+  // Custom domains calmexam.com + www.calmexam.com are attached in the Cloudflare
+  // dashboard/API (Workers Builds token has no zone permissions).
+  "ai": { "binding": "AI" },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "calmexam",
+      "database_id": "e07d8346-cca0-4a6e-9f84-a445dd4ae1d2",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "observability": { "enabled": true }
+}
