@@ -57,7 +57,7 @@ export function ScreenShell({
     </View>
   );
   return (
-    <SafeAreaView style={[styles.flex, { backgroundColor: colors[background] }]} edges={edges}>
+    <SafeAreaView style={[styles.flex, { backgroundColor: colors[background] }]} edges={[...edges, 'left', 'right']}>
       {header ? <View style={styles.headerWrap}>{header}</View> : null}
       {body}
       {footer ? (
