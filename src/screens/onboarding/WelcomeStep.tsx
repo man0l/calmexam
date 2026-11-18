@@ -33,9 +33,6 @@ export function WelcomeStep({ onNext }: { onNext: () => void }) {
   return (
     <ScreenShell footer={<Button testID="welcome-start" label="Get started" onPress={onNext} />} contentStyle={styles.content}>
       <HeroCard style={styles.hero} wave={false}>
-        <Txt variant="captionStrong" color="mint" align="center">
-          CALMEXAM
-        </Txt>
         <View style={styles.art}>
           <Stones />
         </View>

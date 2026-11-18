@@ -21,7 +21,7 @@ export const typography = {
   small: { fontFamily: fonts.regular, fontSize: 14, lineHeight: 20 },
   caption: { fontFamily: fonts.regular, fontSize: 12, lineHeight: 17 },
   captionStrong: { fontFamily: fonts.semibold, fontSize: 11, lineHeight: 16, letterSpacing: 1.1 },
-  tabLabel: { fontFamily: fonts.medium, fontSize: 11, lineHeight: 14 },
+  tabLabel: { fontFamily: fonts.medium, fontSize: 11, lineHeight: 16 },
   button: { fontFamily: fonts.semibold, fontSize: 17, lineHeight: 22, letterSpacing: 0.1 },
   number: { fontFamily: fonts.semibold, fontSize: 17, lineHeight: 24, fontVariant: tabular },
 } as const satisfies Record<string, TextStyle>;

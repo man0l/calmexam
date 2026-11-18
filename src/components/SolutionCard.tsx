@@ -11,7 +11,7 @@ export function SolutionCard({ problem }: { problem: Problem }) {
       <Card>
         <View style={styles.verified}>
           <Icon name="check" color="correct" size={18} />
-          <Txt variant="captionStrong" color="correct">
+          <Txt variant="captionStrong" color="correctEdge">
             VERIFIED ANSWER
           </Txt>
         </View>

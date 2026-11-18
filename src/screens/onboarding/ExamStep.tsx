@@ -52,7 +52,7 @@ export function ExamStep({ exam, otherOpen, otherExam, progress, onSelectExam, o
       <ExamPicker value={exam} onSelect={onSelectExam} />
       <View style={styles.other}>
         <OptionButton label="My exam isn't listed" onPress={onOpenOther} />
-        <Txt variant="caption" color="inkFaint">
+        <Txt variant="caption" color="inkMuted">
           Tell us which one and we will prioritise it.
         </Txt>
       </View>

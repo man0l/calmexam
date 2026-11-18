@@ -66,7 +66,7 @@ d.addEventListener("click",function(e){
     fetch("/api/problems?"+q).then(function(r){return r.json()}).then(function(j){
       list.innerHTML=j.problems.map(function(p,i){return renderProblem(p,i,names)}).join("");score(list);
       var f=list.querySelector(".choice");if(f)f.focus();
-    }).catch(function(){}).then(function(){t.disabled=false});
+    }).catch(function(){var el=s.querySelector(".score");if(el)el.textContent="Couldn't load a new set. Try again."}).then(function(){t.disabled=false});
   }
 });
 })();

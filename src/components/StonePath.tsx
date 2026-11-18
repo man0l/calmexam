@@ -100,12 +100,12 @@ export function StonePath({ stones, finish }: Props) {
                 >
                   {current ? (
                     <View style={styles.pill}>
-                      <Txt variant="captionStrong" color="onPrimary">
+                      <Txt variant="captionStrong" color="ink">
                         UP NEXT
                       </Txt>
                     </View>
                   ) : null}
-                  <Txt variant="h3" color={s.state === 'locked' ? 'inkFaint' : 'ink'} align={left ? 'left' : 'right'}>
+                  <Txt variant="h3" color={s.state === 'locked' ? 'inkMuted' : 'ink'} align={left ? 'left' : 'right'}>
                     {s.title}
                   </Txt>
                   <Txt variant="small" color="inkMuted" align={left ? 'left' : 'right'}>

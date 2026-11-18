@@ -141,8 +141,8 @@ export function PracticeSessionScreen({ navigation, route }: Props) {
         }
       >
         <View style={styles.summary}>
-          <Txt variant="captionStrong" color="primary">
-            SESSION COMPLETE
+          <Txt variant="h3" color="primary">
+            Session complete
           </Txt>
           <Txt variant="display">{`${score}/${results.length}`}</Txt>
           <Txt variant="bodyStrong" color="inkMuted">{`${pct}% correct`}</Txt>
@@ -194,8 +194,7 @@ export function PracticeSessionScreen({ navigation, route }: Props) {
       </Txt>
       <PromptCard problem={problem} />
       <View style={styles.options}>
-        {problem.choices.map((c, i) =>
-          optionState(i) === 'dim' ? null : (
+        {problem.choices.map((c, i) => (
           <OptionButton
             key={`${problem.id}-${i}`}
             testID={`option-${i}`}
@@ -205,14 +204,13 @@ export function PracticeSessionScreen({ navigation, route }: Props) {
             disabled={answered}
             onPress={() => choose(i)}
           />
-          ),
-        )}
+        ))}
       </View>
 
       {answered ? (
         <View style={styles.after} onLayout={(e) => setAfterY(e.nativeEvent.layout.y)}>
-          <Txt variant="h3" color={correct ? 'correct' : 'wrong'}>
-            {correct ? 'Correct. Nicely done.' : `Not quite. The answer is ${LETTERS[problem.answerIndex]}.`}
+          <Txt variant="h3" color={correct ? 'correctEdge' : 'wrongText'}>
+            {correct ? 'Correct. Nicely done.' : `Not quite. The verified answer is ${LETTERS[problem.answerIndex]}.`}
           </Txt>
           <SolutionCard problem={problem} />
           {!correct ? (
@@ -222,7 +220,7 @@ export function PracticeSessionScreen({ navigation, route }: Props) {
               <View style={styles.explainCta}>
                 <Button testID="explain-mistake" label="Explain my mistake" variant="secondary" onPress={explainNow} />
                 {!subscribed ? (
-                  <Txt variant="caption" color="inkFaint" align="center">
+                  <Txt variant="caption" color="inkMuted" align="center">
                     {freeLeft > 0
                       ? `${freeLeft} free ${freeLeft === 1 ? 'explanation' : 'explanations'} left today`
                       : 'Free explanations used for today'}

@@ -28,7 +28,7 @@ export function ExplainCard({ loading, explanation }: Props) {
           <>
             <Txt variant="body">{explanation.text}</Txt>
             {explanation.source === 'local' ? (
-              <Txt variant="caption" color="inkFaint">
+              <Txt variant="caption" color="inkMuted">
                 Offline explanation, built from the verified steps.
               </Txt>
             ) : null}

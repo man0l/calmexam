@@ -57,7 +57,7 @@ globalThis.fetch = async (input, init) => {
     if (upstream.manifestThrows) throw new Error('network down (stub)');
     return upstream.manifest ? Response.json(upstream.manifest) : new Response('404: Not Found', { status: 404 });
   }
-  if (u.endsWith('/exam.png')) return new Response('missing', { status: 404 });
+  if (u.split('?')[0].endsWith('/exam.png')) return new Response('missing', { status: 404 });
   return new Response(new Uint8Array([0x89, 0x50, 0x4e, 0x47]), { headers: { 'content-type': 'text/plain' } });
 };
 
@@ -259,12 +259,12 @@ const postJson = (path, body) =>
     fetched.length = 0;
     const r = await call('/screens/plan.png?v=abc123');
     check('proxy plan 200', r.status === 200 && r.headers.get('content-type') === 'image/png' && r.headers.get('cache-control') === 'public, max-age=86400');
-    check('proxy upstream url + cf', fetched[0]?.u === 'https://raw.githubusercontent.com/man0l/calmexam/main/web/assets/screens/plan.png' && fetched[0]?.cf?.cacheTtl === 86400 && fetched[0]?.cf?.cacheEverything === true);
+    check('proxy upstream url + cf', fetched[0]?.u === 'https://raw.githubusercontent.com/man0l/calmexam/main/web/assets/screens/plan.png?v=abc123' && fetched[0]?.cf?.cacheTtl === 86400 && fetched[0]?.cf?.cacheEverything === true);
     check('proxy 404 passthrough', (await call('/screens/exam.png')).status === 404);
     const n = fetched.length;
     check('proxy not open', (await call('/screens/today.png')).status === 404 && (await call('/screens/bogus.png')).status === 404 && fetched.length === n);
     const og = await call('/og.png');
-    check('proxy og', og.status === 200 && fetched.at(-1).u === 'https://raw.githubusercontent.com/man0l/calmexam/main/web/assets/og.png');
+    check('proxy og', og.status === 200 && fetched.at(-1).u === 'https://raw.githubusercontent.com/man0l/calmexam/main/web/assets/og.png?v=abc123');
   }
 
   // 3) Build-time fallback: bundle with a manifest baked in, runtime fetch failing

@@ -156,7 +156,6 @@ export function breadcrumbLd(items: { name: string; path: string }[]) {
 
 export function ctaSection(source: string, title = 'Get a daily plan built around your exam date'): string {
   return `<section class="cta band" aria-labelledby="cta-h"><div class="wrap narrow">
-<span class="eyebrow">The app is coming soon</span>
 <h2 id="cta-h">${esc(title)}</h2>
 <p class="lead" style="margin:0 auto 28px">The CalmExam app turns verified problems like these into a 5-question placement, a short daily plan and an "explain my mistake" coach. Join the waitlist and we'll email you once at launch.</p>
 <div class="card" style="max-width:600px;margin:0 auto;color:var(--ink)">

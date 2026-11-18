@@ -68,11 +68,8 @@ export function TodayScreen() {
       <HeroCard style={styles.hero}>
         <View style={styles.heroRow}>
           <View style={styles.heroText}>
-            <Txt variant="captionStrong" color="mint">
-              {goalMet ? 'GOAL MET' : 'TODAY’S SESSION'}
-            </Txt>
             <Txt variant="h2" color="onPrimary">
-              {goalMet ? 'Anything more is a bonus' : todayCount === 0 ? `${goal} problems, ${profile.minutesPerDay} min` : `${left} to go today`}
+              {goalMet ? 'Goal met. Anything more is a bonus' : todayCount === 0 ? `${goal} problems, ${profile.minutesPerDay} min` : `${left} to go today`}
             </Txt>
             <Txt variant="small" color="lagoonMuted">
               {`Weighted to ${weak

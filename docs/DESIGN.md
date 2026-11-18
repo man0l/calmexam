@@ -23,14 +23,15 @@ Calm water, stepping stones, graph paper. The direction is "Brilliant-calm" (one
 | `bg` | `#F4F7F5` | mist background |
 | `surface` | `#FFFFFF` | cards |
 | `inset` / `border` / `edge` | `#E9EFEC` / `#DCE5E1` / `#CBD8D2` | inputs, 1.5px borders, tactile bottom edge |
-| `ink` / `inkMuted` / `inkFaint` | `#10232A` / `#52656B` / `#8A9A9E` | text |
+| `ink` / `inkMuted` / `inkFaint` | `#10232A` / `#52656B` / `#7A8B8F` | text; `inkFaint` is for icons and disabled marks only, never body text (below 4.5:1) |
 | `primary` / `primaryEdge` / `primarySoft` | `#147A6E` / `#0B5248` / `#D5EEE7` | buttons, selection |
 | `lagoon` / `lagoonEdge` / `lagoonMuted` | `#0D3A36` / `#072624` / `#9CC9C0` | hero card, text on hero |
 | `mint` / `sand` / `coral` | `#8FD8C4` / `#F2D9A9` / `#F2876A` | illustration, "up next" |
 | `amber` / `amberSoft` | `#D9962B` / `#FAEBCD` | premium only |
-| `correct` / `wrong` | `#2E9466` / `#C4553C` (soft `#DCF2E6` / `#F8E1DA`) | answers, never full-screen red |
+| `correct` / `wrong` | `#2E9466` / `#C4553C` (soft `#DCF2E6` / `#F8E1DA`) | answers, never full-screen red. Text and white-on-fill use `correctEdge` `#217350` / `wrongText` `#A8432D` / `amberText` `#7A5520` for 4.5:1 |
 
 ## Type
+- No tracked-caps kicker above a heading: the heading carries its own weight. Small caps labels are only for card section labels ("Verified answer", "Common pitfalls") and settings group headers.
 - Lexend 400/500/600/700 (app via `@expo-google-fonts/lexend`, web via Google Fonts). Title 28/34 semibold, H2 22/28, body 16/24, caption 12/17, eyebrow 11 semibold +1.1 tracking.
 - Math uses tabular figures and the real minus sign (−).
 

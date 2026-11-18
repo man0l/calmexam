@@ -29,7 +29,7 @@ export function hubPage(exam: Exam, seed: number): string {
   const topics = topicsFor(exam.id);
   const body = `<div class="wrap">
 <nav class="crumbs" aria-label="Breadcrumb"><a href="/">CalmExam</a> / <span aria-current="page">${esc(c.h1)}</span></nav>
-<div class="pagehead narrow"><span class="eyebrow">${esc(exam.name)} · Free · Verified answers</span>
+<div class="pagehead narrow">
 <h1>${esc(c.h1)}</h1><p class="lead">${esc(c.lead)}</p></div>
 </div>
 <section style="padding-top:24px" aria-labelledby="practice"><div class="wrap narrow">
@@ -81,7 +81,7 @@ export function topicPage(topic: Topic, seed: number): string {
   const siblings = topicsFor(exam.id).filter((t) => t.id !== topic.id);
   const body = `<div class="wrap">
 <nav class="crumbs" aria-label="Breadcrumb"><a href="/">CalmExam</a> / <a href="${hubPath(exam.id)}">${esc(c.h1)}</a> / <span aria-current="page">${esc(topic.name)}</span></nav>
-<div class="pagehead narrow"><span class="eyebrow">${esc(exam.name)} · ${esc(topic.name)}</span>
+<div class="pagehead narrow">
 <h1>${esc(h1)}</h1>
 <p class="lead">${esc(tip?.why ?? topic.blurb)} Ten fresh questions every day, each with a verified answer and worked steps.</p></div>
 </div>

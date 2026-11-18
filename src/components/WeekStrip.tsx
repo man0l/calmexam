@@ -14,7 +14,7 @@ export function WeekStrip({ days }: { days: Record<string, number> }) {
         const isToday = k === today;
         return (
           <View key={k} style={styles.day}>
-            <Txt variant="caption" color={isToday ? 'ink' : 'inkFaint'}>
+            <Txt variant="caption" color={isToday ? 'ink' : 'inkMuted'}>
               {weekdayInitial(k)}
             </Txt>
             <View

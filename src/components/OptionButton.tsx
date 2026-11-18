@@ -42,8 +42,8 @@ const EDGE: Record<OptionState, string> = {
 const BADGE: Record<OptionState, string> = {
   idle: colors.inset,
   selected: colors.primary,
-  correct: colors.correct,
-  wrong: colors.wrong,
+  correct: colors.correctEdge,
+  wrong: colors.wrongText,
   dim: colors.inset,
 };
 
@@ -52,7 +52,7 @@ const LETTER: Record<OptionState, ColorToken> = {
   selected: 'onPrimary',
   correct: 'onPrimary',
   wrong: 'onPrimary',
-  dim: 'inkFaint',
+  dim: 'inkMuted',
 };
 
 export function OptionButton({ label, letter, caption, state = 'idle', onPress, disabled, testID }: Props) {

@@ -90,7 +90,7 @@ export function ProjectionGraph({ exam, now, target, daysLeft, height = 200, onR
               </Txt>
             </View>
             <View style={[styles.tag, styles.right, { top: y(own) + 8 }]}>
-              <Txt variant="captionStrong" color="inkFaint">
+              <Txt variant="captionStrong" color="inkMuted">
                 {formatScore(exam, roundFor(exam, own))}
               </Txt>
             </View>
@@ -98,10 +98,10 @@ export function ProjectionGraph({ exam, now, target, daysLeft, height = 200, onR
         ) : null}
       </View>
       <View style={styles.axis}>
-        <Txt variant="caption" color="inkFaint">
+        <Txt variant="caption" color="inkMuted">
           Today
         </Txt>
-        <Txt variant="caption" color="inkFaint">
+        <Txt variant="caption" color="inkMuted">
           {`Exam day · ${daysLeft} days`}
         </Txt>
       </View>

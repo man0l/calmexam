@@ -43,9 +43,8 @@ export function homePage(seed: number, state?: 'joined' | 'error' | 'server'): s
 
   const body = `<section class="hero" id="join" aria-labelledby="hero-h"><div class="wrap">
 <div>
-<span class="eyebrow">SAT Math · AP Calculus AB · A-Level Maths</span>
 <h1 id="hero-h">Exam math practice that's <em>never wrong</em></h1>
-<p class="lead">Unlimited practice where every answer is verified by a generator, a 5-question placement that builds your daily plan, and a calm coach that explains your mistakes using the real steps.</p>
+<p class="lead">Unlimited SAT Math, AP Calculus AB and A-Level Maths practice where every answer is verified by a generator, a 5-question placement that builds your daily plan, and a calm coach that explains your mistakes using the real steps.</p>
 ${waitlistForm('hero', 'home-hero', state)}
 ${badges()}
 </div>
@@ -53,7 +52,6 @@ ${heroPhone('today', 'CalmExam app: today’s session, a weekly streak and a ste
 </div></section>
 
 <section aria-labelledby="how-h"><div class="wrap">
-<span class="eyebrow">How it works</span>
 <h2 id="how-h">From "where do I start?" to a plan in five minutes</h2>
 <div class="grid g3 steps3" style="margin-top:28px">
 <div class="card"><h3>Pick your exam and date</h3><p class="muted" style="margin:0">SAT Math, AP Calculus AB or A-Level Maths. We count the days so you don't have to.</p></div>
@@ -63,14 +61,12 @@ ${heroPhone('today', 'CalmExam app: today’s session, a weekly streak and a ste
 </div></section>
 
 <section class="band" aria-labelledby="screens-h"><div class="wrap">
-<span class="eyebrow">Possible screens</span>
 <h2 id="screens-h">A calm app, one problem at a time</h2>
 <p class="lead">No confetti, no red badges, no countdown pressure. Just the next useful problem and an answer you can trust. Screens are previews and may change before launch.</p>
 <div style="margin-top:36px">${gallery()}</div>
 </div></section>
 
 <section aria-labelledby="practice"><div class="wrap narrow">
-<span class="eyebrow">Try it now</span>
 ${practiceSection({ exam: 'sat', problems, title: 'Try a free SAT Math practice set', intro: `Three SAT Math questions generated today. Answer to check, then see the verified steps. Want a full set? Try the <a href="${hubPath('sat')}">SAT Math practice test</a>.` })}
 </div></section>
 
@@ -100,7 +96,6 @@ ${practiceSection({ exam: 'sat', problems, title: 'Try a free SAT Math practice 
 ${faqSection(FAQS)}
 
 <section class="cta band" aria-labelledby="cta-h"><div class="wrap narrow">
-<span class="eyebrow">Coming soon on iOS and Android</span>
 <h2 id="cta-h">Be first to practise with CalmExam</h2>
 <p class="lead" style="margin:0 auto 28px">One email at launch. No spam, and you can ask us to delete your email any time at ${CONTACT}.</p>
 <div class="card" style="max-width:600px;margin:0 auto;color:var(--ink)">

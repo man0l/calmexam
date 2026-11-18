@@ -39,7 +39,7 @@ function PlanRow({ plan, selected, onPress }: { plan: PlanOption; selected: bool
           <Txt variant="bodyStrong">{annual ? 'Annual' : 'Monthly'}</Txt>
           {annual ? (
             <View style={styles.badge}>
-              <Txt variant="captionStrong" color="amber">
+              <Txt variant="captionStrong" color="amberText">
                 Best value
               </Txt>
             </View>
@@ -93,17 +93,17 @@ export function PaywallScreen() {
             {`${TRIAL_DAYS} days free, then ${current.priceString} a ${selected === 'annual' ? 'year' : 'month'}. Cancel anytime.`}
           </Txt>
           <View style={styles.links}>
-            <Pressable onPress={restore} hitSlop={8} accessibilityRole="button">
+            <Pressable onPress={restore} accessibilityRole="button" style={styles.link}>
               <Txt variant="caption" color="primary">
                 Restore
               </Txt>
             </Pressable>
-            <Pressable onPress={() => Linking.openURL(TERMS_URL)} hitSlop={8} accessibilityRole="link">
+            <Pressable onPress={() => Linking.openURL(TERMS_URL)} accessibilityRole="link" style={styles.link}>
               <Txt variant="caption" color="primary">
                 Terms
               </Txt>
             </Pressable>
-            <Pressable onPress={() => Linking.openURL(PRIVACY_URL)} hitSlop={8} accessibilityRole="link">
+            <Pressable onPress={() => Linking.openURL(PRIVACY_URL)} accessibilityRole="link" style={styles.link}>
               <Txt variant="caption" color="primary">
                 Privacy
               </Txt>
@@ -113,12 +113,9 @@ export function PaywallScreen() {
       }
     >
       <HeroCard style={styles.head} wave={false}>
-        <Txt variant="captionStrong" color="mint">
-          CALMEXAM PRO
-        </Txt>
-        <Txt variant="title" color="onPrimary">{`Reach ${target} on ${exam.shortName} by ${formatShort(profile.examDate)}`}</Txt>
+        <Txt variant="title" color="onPrimary">{`Your plan to ${target} on ${exam.shortName} by ${formatShort(profile.examDate)}`}</Txt>
         <Txt variant="small" color="lagoonMuted">
-          {`Your ${plan.daysLeft}-day plan, ${profile.minutesPerDay} minutes a day, focused on ${plan.weakTopics
+          {`${plan.daysLeft} days, ${profile.minutesPerDay} minutes a day, focused on ${plan.weakTopics
             .map((t) => t.name.toLowerCase())
             .join(', ')}.`}
         </Txt>
@@ -162,7 +159,7 @@ export function PaywallScreen() {
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  notNow: { paddingVertical: spacing.sm, paddingHorizontal: spacing.xs },
+  notNow: { minHeight: 44, justifyContent: 'center', paddingHorizontal: spacing.sm },
   head: { gap: spacing.sm, marginBottom: spacing.xxl },
   timeline: { marginBottom: spacing.sm },
   tlRow: { flexDirection: 'row', gap: spacing.md },
@@ -204,6 +201,7 @@ const styles = StyleSheet.create({
   },
   radioOn: { borderColor: colors.primary },
   radioDot: { width: 10, height: 10, borderRadius: radii.chip, backgroundColor: colors.primary },
-  links: { flexDirection: 'row', justifyContent: 'center', gap: spacing.xxl },
+  links: { flexDirection: 'row', justifyContent: 'center', gap: spacing.sm },
+  link: { minHeight: 44, minWidth: 44, paddingHorizontal: spacing.md, alignItems: 'center', justifyContent: 'center' },
   message: { marginTop: spacing.md },
 });

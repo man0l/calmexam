@@ -86,7 +86,7 @@ export function DateSelector({ exam, value, onChange }: Props) {
             onPress={() => onChange(p.key)}
           />
         ))}
-        <Txt variant="caption" color="inkFaint">
+        <Txt variant="caption" color="inkMuted">
           Typical dates. Check your official timetable.
         </Txt>
       </View>

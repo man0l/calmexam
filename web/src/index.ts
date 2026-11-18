@@ -8,7 +8,7 @@ import { homePage } from './html/home';
 import { INDIESTACK_ORIGIN, INDIESTACK_SITE, LOGO_SVG } from './html/layout';
 import { notFoundPage, privacyPage, termsPage } from './html/legal';
 import { hasOg, hasScreenPng } from './html/screens';
-import { RAW_BASE, loadManifest, setActiveManifest } from './manifest';
+import { RAW_BASE, activeManifest, loadManifest, setActiveManifest } from './manifest';
 import { ORIGIN, allPaths, daySeed, findHub, findTopic } from './site';
 
 const SECURITY_HEADERS: Record<string, string> = {
@@ -112,7 +112,10 @@ export default {
 /** Proxies an allow-listed image (manifest ids only, never user-controlled URLs) from the GitHub repo. */
 async function proxyAsset(file: string): Promise<Response> {
   try {
-    const upstream = await fetch(RAW_BASE + file, { cf: { cacheTtl: 86400, cacheEverything: true } } as RequestInit);
+    // The manifest version is part of the upstream URL so Cloudflare's edge cache (keyed on the URL) refreshes
+    // when new screenshots land; raw.githubusercontent.com ignores the query string.
+    const v = encodeURIComponent(activeManifest().version || '1');
+    const upstream = await fetch(`${RAW_BASE}${file}?v=${v}`, { cf: { cacheTtl: 86400, cacheEverything: true } } as RequestInit);
     if (!upstream.ok) {
       return new Response('Not found', { status: upstream.status === 404 ? 404 : 502, headers: { 'Cache-Control': 'public, max-age=60' } });
     }

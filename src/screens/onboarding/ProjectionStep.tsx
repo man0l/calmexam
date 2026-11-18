@@ -42,7 +42,7 @@ export function ProjectionStep({ exam, plan, placement, progress, onBack, onNext
         <ProjectionGraph exam={exam.id} now={now} target={target} daysLeft={plan.daysLeft} onReady={onGraphReady} />
       </Card>
       <View style={styles.note}>
-        <Txt variant="caption" color="inkFaint">
+        <Txt variant="caption" color="inkMuted">
           An estimate from your quick check and the days you have left, assuming you practise most days. It is not a
           guarantee.
         </Txt>

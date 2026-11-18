@@ -74,5 +74,12 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: spacing.xl, paddingTop: spacing.lg, paddingBottom: spacing.xxxl },
   inner: { width: '100%', maxWidth: layout.maxContentWidth, alignSelf: 'center' },
   headerWrap: { paddingHorizontal: spacing.xl, paddingTop: spacing.sm, width: '100%', maxWidth: layout.maxContentWidth + spacing.xl * 2, alignSelf: 'center' },
-  footer: { paddingHorizontal: spacing.xl, paddingTop: spacing.md, paddingBottom: spacing.lg, gap: spacing.sm },
+  footer: {
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.lg,
+    gap: spacing.sm,
+    borderTopWidth: layout.hairline,
+    borderTopColor: colors.border,
+  },
 });

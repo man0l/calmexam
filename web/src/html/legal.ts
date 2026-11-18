@@ -69,7 +69,7 @@ export function notFoundPage(): string {
     title: 'Page not found | CalmExam',
     description: 'This page does not exist.',
     noindex: true,
-    body: `<section><div class="wrap narrow"><span class="eyebrow">404</span><h1>This page took a wrong turn</h1>
+    body: `<section><div class="wrap narrow"><h1>This page took a wrong turn</h1>
 <p class="lead">The page you're looking for doesn't exist. Here are some calm places to continue:</p>
 <ul>${links}<li><a href="/">CalmExam home</a></li></ul></div></section>`,
   });

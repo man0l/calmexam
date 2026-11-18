@@ -207,10 +207,10 @@ export function TopicArt({ topicId, index = 0, size = 56, locked }: Props) {
   );
 }
 
-export function ExamArt({ exam, size = 56, onDark }: { exam: string; size?: number; onDark?: boolean }) {
+export function ExamArt({ exam, size = 56, selected }: { exam: string; size?: number; selected?: boolean }) {
   const motif: Motif = exam === 'sat' ? 'parabola' : exam === 'ap-calc-ab' ? 'area' : 'wave';
-  const pebble = onDark ? colors.mint : colors.primarySoft;
-  const shade = onDark ? colors.primary : colors.mint;
+  const pebble = selected ? colors.surface : colors.primarySoft;
+  const shade = colors.mint;
   return (
     <Svg width={size} height={size} viewBox="0 0 64 64">
       <Path d={PEBBLE} fill={shade} transform="translate(0 3)" />

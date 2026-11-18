@@ -128,7 +128,7 @@ export function SettingsScreen() {
         <Row label="Reset progress" color="wrong" onPress={onReset} last />
       </Section>
 
-      <Txt variant="caption" color="inkFaint" align="center" style={styles.version}>
+      <Txt variant="caption" color="inkMuted" align="center" style={styles.version}>
         {`CalmExam ${version}`}
       </Txt>
     </ScreenShell>

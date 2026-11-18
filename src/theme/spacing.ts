@@ -21,7 +21,7 @@ export const layout = {
   hairline: 1,
   iconSize: 24,
   iconSmall: 18,
-  closeSize: 40,
+  closeSize: 44,
   edge: 4,
   stone: 76,
   stoneHero: 96,
