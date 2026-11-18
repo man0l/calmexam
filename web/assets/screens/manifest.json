@@ -1,0 +1,12 @@
+{
+  "screens": [
+    "exam",
+    "placement",
+    "plan",
+    "answer",
+    "explain",
+    "today",
+    "paywall"
+  ],
+  "version": "889447a75953"
+}
