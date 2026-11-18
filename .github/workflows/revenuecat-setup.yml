@@ -1,0 +1,35 @@
+name: RevenueCat setup
+
+# Creates the CalmExam catalog in RevenueCat (apps, products, "pro"
+# entitlement, current "default" offering with annual + monthly packages) and
+# prints the public SDK keys. Needs the REVENUECAT_SECRET_KEY repo secret
+# (RevenueCat v2 secret key, project configuration read/write). Re-runnable.
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_id:
+        description: RevenueCat project id (optional if the key sees one project)
+        required: false
+      push_to_stores:
+        description: Also create the products in App Store Connect / Play Console
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - run: node scripts/revenuecat-setup.mjs
+        env:
+          REVENUECAT_SECRET_KEY: ${{ secrets.REVENUECAT_SECRET_KEY }}
+          REVENUECAT_PROJECT_ID: ${{ inputs.project_id }}
+          PUSH_TO_STORES: ${{ inputs.push_to_stores && '1' || '' }}

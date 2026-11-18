@@ -9,7 +9,7 @@ import { extname, join, resolve } from 'node:path';
 
 const DIST = resolve(process.env.DIST_DIR ?? 'dist');
 const OUT = resolve(process.env.OUT_DIR ?? 'safe-area-audit');
-const SCREENS = ['onboarding', 'exam', 'placement', 'plan', 'today', 'practice', 'progress', 'settings', 'answer', 'explain', 'paywall'];
+const SCREENS = ['onboarding', 'exam', 'date', 'placement', 'plan', 'today', 'practice', 'progress', 'settings', 'answer', 'explain', 'paywall'];
 // Insets in CSS px (= iOS pt / Android dp), [top, right, bottom, left].
 const DEVICES = [
   { id: 'iphone16pro', w: 402, h: 874, ins: [62, 0, 34, 0], island: true, home: true },

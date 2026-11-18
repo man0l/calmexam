@@ -22,7 +22,7 @@ on:
       screens:
         description: Comma-separated demo screen ids
         required: false
-        default: exam,placement,plan,answer,explain,today,paywall
+        default: exam,date,placement,plan,answer,explain,today,paywall
 
 permissions:
   contents: write
@@ -42,7 +42,7 @@ jobs:
       - run: npm i --no-save @playwright/test@1.61.1 && npx playwright install --with-deps chromium
       - run: node scripts/screenshots.mjs
         env:
-          SCREENS: ${{ inputs.screens || 'exam,placement,plan,answer,explain,today,paywall' }}
+          SCREENS: ${{ inputs.screens || 'exam,date,placement,plan,answer,explain,today,paywall' }}
       - uses: actions/upload-artifact@v7
         with:
           name: app-screens
