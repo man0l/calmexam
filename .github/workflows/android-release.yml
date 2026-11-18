@@ -7,8 +7,12 @@ concurrency:
 on:
   push:
     branches: [main, master]
+    paths-ignore:
+      - 'web/**'
   pull_request:
     branches: [main, master]
+    paths-ignore:
+      - 'web/**'
   workflow_dispatch:
 
 permissions:
