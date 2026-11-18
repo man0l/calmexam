@@ -17,5 +17,8 @@
     "esbuild": "^0.28.2",
     "typescript": "~6.0.3",
     "wrangler": "^4.164.0"
+  },
+  "dependencies": {
+    "indiestack-ai-bots": "^0.1.2"
   }
 }

@@ -18,6 +18,10 @@ export interface PageOpts {
   ogType?: string;
 }
 
+/** indiestack cookie-free analytics (page views) and AI bot tracking (Worker). */
+export const INDIESTACK_ORIGIN = 'https://indiestack.manol-trendafilov.workers.dev';
+export const INDIESTACK_SITE = '769f2f15dd0f432e827a27af0a4bad5d';
+
 export function page(o: PageOpts): string {
   const url = ORIGIN + (o.path === '/' ? '/' : o.path);
   const ld = (o.jsonLd ?? []).map(ldJson).join('');
@@ -42,6 +46,7 @@ ${hasOg() ? `<meta property="og:image" content="${ORIGIN}${ogPath()}">\n<meta pr
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap">
 <style>${CSS}</style>
+<script defer src="${INDIESTACK_ORIGIN}/a.js" data-site="${INDIESTACK_SITE}"></script>
 ${ld}
 </head>
 <body>

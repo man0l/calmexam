@@ -1,10 +1,11 @@
 import appStoreBadge from '../assets/badges/app-store-badge.svg';
 import googlePlayBadge from '../assets/badges/google-play-badge.png';
+import { withAIBotTracking } from 'indiestack-ai-bots';
 import { CORS, handleExplain, handleHealth, handleProblems, handleWaitlist, json } from './api';
 import type { Env } from './env';
 import { hubPage, topicPage } from './html/exam-pages';
 import { homePage } from './html/home';
-import { LOGO_SVG } from './html/layout';
+import { INDIESTACK_ORIGIN, INDIESTACK_SITE, LOGO_SVG } from './html/layout';
 import { notFoundPage, privacyPage, termsPage } from './html/legal';
 import { hasOg, hasScreenPng } from './html/screens';
 import { RAW_BASE, loadManifest, setActiveManifest } from './manifest';
@@ -15,7 +16,7 @@ const SECURITY_HEADERS: Record<string, string> = {
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   'X-Frame-Options': 'DENY',
   'Content-Security-Policy':
-    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'",
+    `default-src 'self'; script-src 'self' 'unsafe-inline' ${INDIESTACK_ORIGIN}; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' ${INDIESTACK_ORIGIN}; base-uri 'none'; form-action 'self'; frame-ancestors 'none'`,
 };
 
 function html(body: string, status = 200): Response {
@@ -72,7 +73,7 @@ async function handleApi(req: Request, env: Env, url: URL): Promise<Response> {
   }
 }
 
-export default {
+const app = {
   async fetch(req: Request, env: Env): Promise<Response> {
     const url = new URL(req.url);
 
@@ -100,6 +101,12 @@ export default {
     if (url.hostname !== 'calmexam.com') headers.set('X-Robots-Tag', 'noindex');
     return new Response(req.method === 'HEAD' ? null : res.body, { status: res.status, headers });
   },
+};
+
+// indiestack: server-side AI bot tracking (GPTBot, ClaudeBot, Perplexity...). Never blocks or alters the response;
+// it finds ctx.waitUntil in the args itself. (Its typings take one rest type, hence unknown[].)
+export default {
+  fetch: withAIBotTracking((req: Request, ...rest: unknown[]) => app.fetch(req, rest[0] as Env), { websiteId: INDIESTACK_SITE }),
 } satisfies ExportedHandler<Env>;
 
 /** Proxies an allow-listed image (manifest ids only, never user-controlled URLs) from the GitHub repo. */
