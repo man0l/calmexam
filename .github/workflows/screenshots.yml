@@ -1,0 +1,49 @@
+name: App screenshots
+
+# Renders the Expo web build at iPhone size, captures the demo screens
+# (?demo=<id>) with Playwright and commits them to web/assets/screens/, where
+# the calmexam.com gallery picks them up through manifest.json.
+
+concurrency:
+  group: screenshots-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      screens:
+        description: Comma-separated demo screen ids
+        required: false
+        default: exam,placement,plan,answer,explain,today,paywall
+
+permissions:
+  contents: write
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx expo export --platform web
+      - run: npm i --no-save @playwright/test@1.61.1 && npx playwright install --with-deps chromium
+      - run: node scripts/screenshots.mjs
+        env:
+          SCREENS: ${{ inputs.screens }}
+      - uses: actions/upload-artifact@v7
+        with:
+          name: app-screens
+          path: web/assets/screens/
+      - name: Commit screenshots
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add web/assets/screens
+          git diff --cached --quiet && echo "no changes" && exit 0
+          git commit -m "chore(web): update app screenshots"
+          git push

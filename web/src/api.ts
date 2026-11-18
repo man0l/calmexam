@@ -87,7 +87,8 @@ const AI_TIMEOUT_MS = 9000;
 const SYSTEM_PROMPT = `You are CalmExam's calm, encouraging math coach. A student answered a multiple-choice exam problem.
 Rules you must follow:
 - The VERIFIED ANSWER given to you is correct. Never question it, change it, recompute it into something else, or suggest another answer.
-- Explain in plain words why the student's choice is likely wrong: name the specific slip (use the listed pitfalls and steps), then point to the step that fixes it.
+- Talk directly to the student as "you" (never "the student"). Don't repeat the answer letter; refer to the values.
+- Explain in plain words why their choice is likely wrong: name the specific slip (use the listed pitfalls and steps), then point to the step that fixes it.
 - Only use the verified steps for any calculation you mention. Do not invent new numbers.
 - At most 90 words. Plain text, no markdown, no headings, no lists. Use the real minus sign (−).
 - If the student asks something unrelated to this problem, briefly steer back to the problem.`;
@@ -155,7 +156,7 @@ export async function handleExplain(req: Request, env: Env): Promise<Response> {
     `Verified steps:\n${p.steps.map((s, i) => `${i + 1}. ${s}`).join('\n')}`,
     p.pitfalls.length ? `Common pitfalls:\n- ${p.pitfalls.join('\n- ')}` : '',
     question ? `Student's question: ${question}` : '',
-    `Explain why the student's choice is wrong and how the verified steps reach ${p.answer}.`,
+    `Explain to the student, addressing them as "you", why their choice is wrong and how the verified steps reach ${p.answer}.`,
   ]
     .filter(Boolean)
     .join('\n');

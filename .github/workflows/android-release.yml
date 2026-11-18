@@ -1,0 +1,153 @@
+name: Android Release
+
+concurrency:
+  group: android-release-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npx expo lint
+      - run: npm run verify:engine
+
+  android:
+    needs: quality
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    env:
+      EXPO_PUBLIC_API_BASE_URL: ${{ secrets.EXPO_PUBLIC_API_BASE_URL || 'https://calmexam.manol-trendafilov.workers.dev/api' }}
+      EXPO_PUBLIC_REVENUECAT_KEY: ${{ secrets.EXPO_PUBLIC_REVENUECAT_KEY }}
+      ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+      HAS_PLAY_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON != '' }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set short SHA
+        run: echo "SHA_SHORT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Cache Gradle
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
+      - run: npm ci
+
+      # github.run_number resets to 1 whenever this workflow file is
+      # recreated (it happened once already — see git history), which
+      # produces a versionCode Play Console has already served and gets the
+      # rollout rejected with "does not allow any existing users to upgrade".
+      # Ask Play Console for the real max versionCode across all tracks
+      # instead, so this can't regress again; falls back to run_number only
+      # when Play can't be queried (e.g. first-ever release).
+      - name: Compute next Android version code
+        env:
+          ANDROID_PACKAGE_NAME: com.balkanbit.calmexam
+          GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          ANDROID_FALLBACK_VERSION_CODE: ${{ github.run_number }}
+        run: echo "ANDROID_VERSION_CODE=$(node scripts/next-android-version-code.mjs)" >> "$GITHUB_ENV"
+
+      - name: Generate native Android project
+        run: npx expo prebuild --platform android --no-install
+
+      - name: Configure release signing
+        run: bash scripts/configure-android-signing.sh
+
+      - name: Set version code
+        run: bash scripts/set-android-version-code.sh
+
+      # prebuild writes gradle.properties WITHOUT a trailing newline, so
+      # blindly appending here glues the new line onto the last property
+      # and silently drops it (that's how the 4g heap was lost on run
+      # 32724796729). Replace jvmargs in place; guard any appends.
+      - name: Raise Gradle heap
+        run: |
+          sed -i 's/^org.gradle.jvmargs=.*/org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1g -XX:+HeapDumpOnOutOfMemoryError/' android/gradle.properties
+          grep -q '^org.gradle.jvmargs=' android/gradle.properties || echo 'org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1g' >> android/gradle.properties
+          printf '\nandroid.lint.checkReleaseBuilds=false\n' >> android/gradle.properties
+
+      - name: Build release AAB + APK
+        run: ./gradlew bundleRelease assembleRelease --no-daemon -x lintVitalRelease
+        working-directory: android
+
+      - name: Stage release artifacts
+        run: |
+          cp android/app/build/outputs/bundle/release/app-release.aab calmexam-${{ env.SHA_SHORT }}.aab
+          cp android/app/build/outputs/apk/release/app-release.apk calmexam-${{ env.SHA_SHORT }}.apk
+          cp android/app/build/outputs/mapping/release/mapping.txt mapping-${{ env.SHA_SHORT }}.txt
+
+      - name: Upload Play Store artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: calmexam-play-${{ env.SHA_SHORT }}
+          path: |
+            calmexam-${{ env.SHA_SHORT }}.aab
+            calmexam-${{ env.SHA_SHORT }}.apk
+            mapping-${{ env.SHA_SHORT }}.txt
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "android-${{ github.run_number }}" \
+            "calmexam-${{ env.SHA_SHORT }}.aab" \
+            "calmexam-${{ env.SHA_SHORT }}.apk" \
+            "mapping-${{ env.SHA_SHORT }}.txt" \
+            --title "Android build ${{ env.SHA_SHORT }} (v${{ env.ANDROID_VERSION_CODE }})" \
+            --notes "Play Store bundle (versionCode ${{ env.ANDROID_VERSION_CODE }}) + installable APK + ProGuard mapping. Upload .aab to Internal testing, attach mapping.txt as deobfuscation file, and add testers before rollout." \
+            --latest
+
+      # The very first bundle has to be uploaded by hand in Play Console (the
+      # app must exist there before the API accepts uploads). Until the
+      # service-account secret is added this step is skipped.
+      - name: Submit to Play Store internal track
+        if: env.HAS_PLAY_SERVICE_ACCOUNT == 'true'
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.balkanbit.calmexam
+          releaseFiles: calmexam-${{ env.SHA_SHORT }}.aab
+          tracks: internal
+          mappingFile: mapping-${{ env.SHA_SHORT }}.txt
+
+      - name: Prune old Android artifacts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          KEEP_ARTIFACTS: "2"
+        run: bash scripts/prune-android-artifacts.sh
