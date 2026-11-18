@@ -1,6 +1,7 @@
 {
   "screens": [
     "exam",
+    "date",
     "placement",
     "plan",
     "answer",
@@ -8,5 +9,5 @@
     "today",
     "paywall"
   ],
-  "version": "9b8287afad62"
+  "version": "2d041e7625d2"
 }
