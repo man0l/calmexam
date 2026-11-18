@@ -1,6 +1,6 @@
 # CalmExam: Claude Code guidelines
 
-CalmExam is a calm exam-practice app (SAT Math, AP Calculus AB, A-Level Maths) built with **Expo SDK 56 (React Native + TypeScript)** for iOS, Android and web. Read `docs/DESIGN.md` ("Still Water") before touching UI and `docs/API.md` before touching networking.
+CalmExam is a calm exam-practice app (SAT Math, AP Calculus AB, A-Level Maths) built with **Expo SDK 56 (React Native + TypeScript)** for iOS, Android and web. Read `docs/DESIGN.md` ("Riverstone") before touching UI and `docs/API.md` before touching networking.
 
 ## Rules
 

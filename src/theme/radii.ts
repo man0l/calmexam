@@ -1,10 +1,11 @@
 export const radii = {
-  card: 20,
-  option: 16,
-  button: 16,
+  card: 24,
+  hero: 28,
+  option: 18,
+  button: 18,
   input: 14,
   chip: 999,
   phone: 44,
   bar: 4,
-  icon: 12,
+  icon: 14,
 } as const;

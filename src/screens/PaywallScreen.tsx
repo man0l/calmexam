@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { BackHandler, Linking, Pressable, StyleSheet, View } from 'react-native';
 import { Button } from '../components/Button';
+import { HeroCard } from '../components/HeroCard';
 import { Icon, type IconName } from '../components/Icon';
 import { ScreenShell } from '../components/ScreenShell';
 import { TopBar } from '../components/TopBar';
@@ -111,17 +112,17 @@ export function PaywallScreen() {
         </>
       }
     >
-      <View style={styles.head}>
-        <Txt variant="captionStrong" color="primary">
+      <HeroCard style={styles.head} wave={false}>
+        <Txt variant="captionStrong" color="mint">
           CALMEXAM PRO
         </Txt>
-        <Txt variant="title">{`Reach ${target} on ${exam.shortName} by ${formatShort(profile.examDate)}`}</Txt>
-        <Txt variant="body" color="inkMuted">
+        <Txt variant="title" color="onPrimary">{`Reach ${target} on ${exam.shortName} by ${formatShort(profile.examDate)}`}</Txt>
+        <Txt variant="small" color="lagoonMuted">
           {`Your ${plan.daysLeft}-day plan, ${profile.minutesPerDay} minutes a day, focused on ${plan.weakTopics
             .map((t) => t.name.toLowerCase())
             .join(', ')}.`}
         </Txt>
-      </View>
+      </HeroCard>
 
       <View style={styles.timeline}>
         {TIMELINE.map((t, i) => (
@@ -162,7 +163,7 @@ export function PaywallScreen() {
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   notNow: { paddingVertical: spacing.sm, paddingHorizontal: spacing.xs },
-  head: { gap: spacing.sm, marginBottom: spacing.xl },
+  head: { gap: spacing.sm, marginBottom: spacing.xxl },
   timeline: { marginBottom: spacing.sm },
   tlRow: { flexDirection: 'row', gap: spacing.md },
   tlRail: { alignItems: 'center', width: 36 },
@@ -183,11 +184,13 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     padding: spacing.lg,
     borderRadius: radii.option,
-    borderWidth: layout.hairline,
+    borderWidth: 2,
+    borderBottomWidth: 4,
     borderColor: colors.border,
+    borderBottomColor: colors.edge,
     backgroundColor: colors.surface,
   },
-  planSelected: { borderColor: colors.primary, borderWidth: 2, padding: spacing.lg - 1 },
+  planSelected: { borderColor: colors.primary, borderBottomColor: colors.primaryEdge, backgroundColor: colors.primarySoft },
   planTitle: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   badge: { backgroundColor: colors.amberSoft, borderRadius: radii.chip, paddingHorizontal: spacing.sm, paddingVertical: 2 },
   radio: {

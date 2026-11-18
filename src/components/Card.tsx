@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { StyleSheet, View, type ViewStyle } from 'react-native';
-import { colors, layout, radii, spacing } from '../theme';
+import { colors, radii, spacing } from '../theme';
 
 type Variant = 'surface' | 'inset' | 'premium' | 'correct' | 'wrong' | 'soft';
 
@@ -23,9 +23,21 @@ const BORDER: Record<Variant, string> = {
 };
 
 export function Card({ children, variant = 'surface', style }: { children: ReactNode; variant?: Variant; style?: ViewStyle }) {
-  return <View style={[styles.card, { backgroundColor: BG[variant], borderColor: BORDER[variant] }, style]}>{children}</View>;
+  return (
+    <View
+      style={[
+        styles.card,
+        { backgroundColor: BG[variant], borderColor: BORDER[variant] },
+        variant === 'surface' && styles.raised,
+        style,
+      ]}
+    >
+      {children}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-  card: { borderRadius: radii.card, borderWidth: layout.hairline, padding: spacing.xl, gap: spacing.md },
+  card: { borderRadius: radii.card, borderWidth: 1.5, padding: spacing.xl, gap: spacing.md },
+  raised: { borderBottomWidth: 3, borderBottomColor: colors.edge },
 });

@@ -2,13 +2,14 @@ import { useNavigation } from '@react-navigation/native';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Icon } from '../components/Icon';
 import { ProgressBar } from '../components/ProgressBar';
+import { TopicArt } from '../components/TopicArt';
 import { ScreenShell } from '../components/ScreenShell';
 import { Txt } from '../components/Txt';
 import { topicsFor } from '../engine';
 import { accuracy, randomSeed } from '../services/practice';
 import { useProfile } from '../store/ProfileContext';
 import { useProgress } from '../store/ProgressContext';
-import { colors, layout, radii, spacing } from '../theme';
+import { colors, radii, spacing } from '../theme';
 
 export function PracticeScreen() {
   const navigation = useNavigation();
@@ -28,7 +29,7 @@ export function PracticeScreen() {
         </Txt>
       </View>
       <View style={styles.list}>
-        {topics.map((t) => {
+        {topics.map((t, i) => {
           const stat = progress.topics[t.id];
           const acc = accuracy(stat);
           return (
@@ -37,8 +38,9 @@ export function PracticeScreen() {
               testID={`topic-${t.id}`}
               accessibilityRole="button"
               onPress={() => navigation.navigate('Session', { kind: 'topic', topicId: t.id, seed: randomSeed() })}
-              style={({ pressed }) => [styles.row, pressed && { backgroundColor: colors.inset }]}
+              style={({ pressed }) => [styles.row, pressed && styles.pressed]}
             >
+              <TopicArt topicId={t.id} index={i} size={56} />
               <View style={styles.flex}>
                 <Txt variant="bodyStrong">{t.name}</Txt>
                 <Txt variant="small" color="inkMuted" numberOfLines={2}>
@@ -72,10 +74,13 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     padding: spacing.lg,
     borderRadius: radii.card,
-    borderWidth: layout.hairline,
+    borderWidth: 1.5,
+    borderBottomWidth: 4,
     borderColor: colors.border,
+    borderBottomColor: colors.edge,
     backgroundColor: colors.surface,
   },
+  pressed: { borderBottomWidth: 1.5, marginTop: 2.5 },
   meter: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginTop: spacing.sm },
   pct: { minWidth: 36, textAlign: 'right', fontVariant: ['tabular-nums'] },
 });

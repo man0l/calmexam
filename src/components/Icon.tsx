@@ -1,4 +1,4 @@
-import Svg, { Circle, Path, Rect } from 'react-native-svg';
+import Svg, { Circle, Ellipse, Path, Rect } from 'react-native-svg';
 import { colors, layout, type ColorToken } from '../theme';
 
 export type IconName =
@@ -14,7 +14,9 @@ export type IconName =
   | 'spark'
   | 'bell'
   | 'card'
-  | 'calendar';
+  | 'calendar'
+  | 'stones'
+  | 'flag';
 
 interface Props {
   name: IconName;
@@ -73,6 +75,14 @@ export function Icon({ name, color = 'ink', size = layout.iconSize }: Props) {
           <Path d="M4 10h16M8.5 3v4M15.5 3v4" {...stroke} />
         </>
       ) : null}
+      {name === 'stones' ? (
+        <>
+          <Ellipse cx={6.5} cy={17} rx={3.5} ry={2.4} fill={c} />
+          <Ellipse cx={12.5} cy={12} rx={4} ry={2.7} fill={c} />
+          <Ellipse cx={18} cy={6.5} rx={4.2} ry={2.9} fill={c} />
+        </>
+      ) : null}
+      {name === 'flag' ? <Path d="M6 21V4M6 4.5h11l-2.5 4 2.5 4H6" {...stroke} strokeWidth={2} /> : null}
     </Svg>
   );
 }

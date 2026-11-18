@@ -3,7 +3,7 @@ import { HUB_COPY } from '../content';
 import { CONTACT, ORIGIN, hubPath } from '../site';
 import { Faq, badges, faqLd, faqSection, page, waitlistForm } from './layout';
 import { practiceSection, quizLd } from './practice';
-import { gallery, phone } from './screens';
+import { gallery, heroPhone } from './screens';
 import { esc } from './util';
 
 const FAQS: Faq[] = [
@@ -49,7 +49,7 @@ export function homePage(seed: number, state?: 'joined' | 'error' | 'server'): s
 ${waitlistForm('hero', 'home-hero', state)}
 ${badges()}
 </div>
-${phone('answer', 'CalmExam app mockup: a quadratics question with the verified answer, numbered steps and a common pitfall')}
+${heroPhone('today', 'CalmExam app: today’s session, a weekly streak and a stepping-stone path of your weakest topics')}
 </div></section>
 
 <section aria-labelledby="how-h"><div class="wrap">

@@ -1,3 +1,10 @@
+import {
+  Lexend_400Regular,
+  Lexend_500Medium,
+  Lexend_600SemiBold,
+  Lexend_700Bold,
+  useFonts,
+} from '@expo-google-fonts/lexend';
 import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useState } from 'react';
@@ -84,6 +91,8 @@ function Root({ demo }: { demo: DemoConfig | null }) {
 
 export default function App() {
   const [demo, setDemo] = useState<DemoConfig | null | undefined>(undefined);
+  const [fontsLoaded, fontError] = useFonts({ Lexend_400Regular, Lexend_500Medium, Lexend_600SemiBold, Lexend_700Bold });
+  const fontsReady = fontsLoaded || !!fontError;
 
   useEffect(() => {
     applyDemo()
@@ -93,7 +102,7 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      {demo === undefined ? (
+      {demo === undefined || !fontsReady ? (
         <View style={styles.root} />
       ) : (
         <ProfileProvider>

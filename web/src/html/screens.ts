@@ -63,10 +63,10 @@ const MOCKS: Record<ScreenId, string> = {
 <line x1="10" y1="55" x2="212" y2="55" stroke="#E0DBD1" stroke-dasharray="3 4"/>
 <line x1="10" y1="15" x2="212" y2="15" stroke="#E0DBD1" stroke-dasharray="3 4"/>
 <path d="M12 80 C60 76 120 70 206 62" fill="none" stroke="#8C979C" stroke-width="2.5" stroke-dasharray="5 5"/>
-<path d="M12 80 C60 64 120 34 206 22" fill="none" stroke="#2E6E68" stroke-width="3.5" stroke-linecap="round"/>
-<circle cx="12" cy="80" r="4" fill="#2E6E68"/><circle cx="206" cy="22" r="5" fill="#2E6E68"/>
+<path d="M12 80 C60 64 120 34 206 22" fill="none" stroke="#147A6E" stroke-width="3.5" stroke-linecap="round"/>
+<circle cx="12" cy="80" r="4" fill="#147A6E"/><circle cx="206" cy="22" r="5" fill="#147A6E"/>
 <text x="12" y="108" font-size="9" fill="#8C979C">Today 560</text>
-<text x="150" y="12" font-size="10" font-weight="600" fill="#2E6E68">680</text>
+<text x="150" y="12" font-size="10" font-weight="600" fill="#147A6E">680</text>
 <text x="168" y="76" font-size="9" fill="#8C979C">600</text>
 </svg>
 <div class="rowx cap"><span style="color:var(--primary);font-weight:600">— With CalmExam</span><span>- - On your own</span></div>
@@ -102,7 +102,7 @@ const MOCKS: Record<ScreenId, string> = {
 <div class="mcard rowx">
 <svg width="72" height="72" viewBox="0 0 72 72" role="img" aria-label="Daily goal: 8 of 10 problems">
 <circle cx="36" cy="36" r="30" fill="none" stroke="#ECE8E0" stroke-width="8"/>
-<circle cx="36" cy="36" r="30" fill="none" stroke="#2E6E68" stroke-width="8" stroke-linecap="round" stroke-dasharray="150.8 188.5" transform="rotate(-90 36 36)"/>
+<circle cx="36" cy="36" r="30" fill="none" stroke="#147A6E" stroke-width="8" stroke-linecap="round" stroke-dasharray="150.8 188.5" transform="rotate(-90 36 36)"/>
 <text x="36" y="41" text-anchor="middle" font-size="15" font-weight="600" fill="#1E2A2F">8/10</text></svg>
 <div style="flex:1"><b>Daily goal</b><br><span class="cap">2 more problems · about 3 min</span></div>
 </div>
@@ -115,6 +115,13 @@ const MOCKS: Record<ScreenId, string> = {
 
 export function phone(id: ScreenId, label: string): string {
   return `<div class="phone" role="img" aria-label="${label}"><div class="screen">${MOCKS[id]}</div></div>`;
+}
+
+export function heroPhone(id: ScreenId, label: string): string {
+  const inner = hasScreenPng(id)
+    ? `<div class="phone" role="img" aria-label="${label}"><img class="shot" src="/screens/${id}.png?v=${version()}" width="260" height="560" alt=""></div>`
+    : phone(id, label);
+  return `<div class="stage">${inner}<div class="stones" aria-hidden="true"><i></i><i></i><i></i></div></div>`;
 }
 
 export function screenFigure(s: (typeof SCREENS)[number]): string {

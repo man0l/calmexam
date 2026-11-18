@@ -6,7 +6,7 @@ import { CSS } from './styles';
 import { esc, ldJson } from './util';
 
 export const LOGO_SVG =
-  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="#2E6E68"/><path d="M14 42c6-4 12-4 18 0s12 4 18 0" stroke="#F5F3EE" stroke-width="4" fill="none" stroke-linecap="round" opacity=".55"/><path d="M19 27l9 9 18-18" stroke="#F5F3EE" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="18" fill="#0D3A36"/><path d="M10 47c6-3 12-3 18 0s12 3 18 0 6-1.5 8-1.5" stroke="#147A6E" stroke-width="3" stroke-linecap="round" fill="none"/><ellipse cx="18" cy="40" rx="7" ry="4.5" fill="#F2D9A9"/><ellipse cx="32" cy="31" rx="8" ry="5" fill="#8FD8C4"/><ellipse cx="46" cy="20" rx="9" ry="5.5" fill="#fff"/></svg>';
 
 export interface PageOpts {
   path: string;
@@ -35,12 +35,12 @@ ${o.noindex ? '<meta name="robots" content="noindex">' : `<link rel="canonical" 
 <meta property="og:description" content="${esc(o.description)}">
 <meta property="og:url" content="${url}">
 ${hasOg() ? `<meta property="og:image" content="${ORIGIN}${ogPath()}">\n<meta property="og:image:width" content="1200">\n<meta property="og:image:height" content="630">\n<meta name="twitter:card" content="summary_large_image">` : '<meta name="twitter:card" content="summary">'}
-<meta name="theme-color" content="#F5F3EE">
+<meta name="theme-color" content="#F4F7F5">
 <!-- TODO(app launch): <meta name="apple-itunes-app" content="app-id=APP_STORE_ID"> once the App Store id exists -->
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap">
 <style>${CSS}</style>
 ${ld}
 </head>

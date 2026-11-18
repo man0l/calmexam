@@ -7,10 +7,11 @@ interface Props {
   done: number;
   goal: number;
   size?: number;
+  onDark?: boolean;
 }
 
-export function GoalRing({ done, goal, size = layout.ringSize }: Props) {
-  const stroke = layout.ringStroke;
+export function GoalRing({ done, goal, size = layout.ringSize, onDark }: Props) {
+  const stroke = onDark ? 10 : layout.ringStroke;
   const r = (size - stroke) / 2;
   const circ = 2 * Math.PI * r;
   const pct = goal > 0 ? Math.min(1, done / goal) : 0;
@@ -18,12 +19,12 @@ export function GoalRing({ done, goal, size = layout.ringSize }: Props) {
   return (
     <View style={{ width: size, height: size }}>
       <Svg width={size} height={size}>
-        <Circle cx={size / 2} cy={size / 2} r={r} stroke={colors.inset} strokeWidth={stroke} fill="none" />
+        <Circle cx={size / 2} cy={size / 2} r={r} stroke={onDark ? colors.lagoonTrack : colors.inset} strokeWidth={stroke} fill="none" />
         <Circle
           cx={size / 2}
           cy={size / 2}
           r={r}
-          stroke={complete ? colors.correct : colors.primary}
+          stroke={onDark ? colors.mint : complete ? colors.correct : colors.primary}
           strokeWidth={stroke}
           fill="none"
           strokeLinecap="round"
@@ -33,10 +34,10 @@ export function GoalRing({ done, goal, size = layout.ringSize }: Props) {
         />
       </Svg>
       <View style={styles.center}>
-        <Txt variant="h2" style={styles.num}>
+        <Txt variant="h2" color={onDark ? 'onPrimary' : 'ink'} style={styles.num}>
           {`${Math.min(done, 999)}/${goal}`}
         </Txt>
-        <Txt variant="caption" color="inkMuted">
+        <Txt variant="caption" color={onDark ? 'lagoonMuted' : 'inkMuted'}>
           {complete ? 'goal met' : 'problems'}
         </Txt>
       </View>

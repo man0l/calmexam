@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import type { Problem } from '../engine';
-import { colors, radii, spacing } from '../theme';
+import { colors, fonts, radii, spacing } from '../theme';
 import { Card } from './Card';
 import { Icon } from './Icon';
 import { Txt } from './Txt';
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
   wrap: { gap: spacing.md },
   flex: { flex: 1 },
   verified: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
-  answer: { fontWeight: '600' },
+  answer: { fontFamily: fonts.semibold },
   step: { flexDirection: 'row', gap: spacing.md, alignItems: 'flex-start' },
   num: {
     width: 24,

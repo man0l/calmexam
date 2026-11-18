@@ -31,11 +31,27 @@ const BORDER: Record<OptionState, string> = {
   dim: colors.border,
 };
 
+const EDGE: Record<OptionState, string> = {
+  idle: colors.edge,
+  selected: colors.primaryEdge,
+  correct: colors.correctEdge,
+  wrong: colors.wrong,
+  dim: colors.border,
+};
+
+const BADGE: Record<OptionState, string> = {
+  idle: colors.inset,
+  selected: colors.primary,
+  correct: colors.correct,
+  wrong: colors.wrong,
+  dim: colors.inset,
+};
+
 const LETTER: Record<OptionState, ColorToken> = {
   idle: 'inkMuted',
-  selected: 'primary',
-  correct: 'correct',
-  wrong: 'wrong',
+  selected: 'onPrimary',
+  correct: 'onPrimary',
+  wrong: 'onPrimary',
   dim: 'inkFaint',
 };
 
@@ -49,12 +65,13 @@ export function OptionButton({ label, letter, caption, state = 'idle', onPress, 
       onPress={onPress}
       style={({ pressed }) => [
         styles.option,
-        { backgroundColor: pressed && state === 'idle' ? colors.inset : BG[state], borderColor: BORDER[state] },
+        { backgroundColor: BG[state], borderColor: BORDER[state], borderBottomColor: EDGE[state] },
+        pressed && state === 'idle' && styles.pressed,
         state === 'dim' && styles.dim,
       ]}
     >
       {letter ? (
-        <View style={[styles.letter, { borderColor: BORDER[state] }]}>
+        <View style={[styles.letter, { backgroundColor: BADGE[state] }]}>
           <Txt variant="label" color={LETTER[state]}>
             {letter}
           </Txt>
@@ -79,7 +96,8 @@ const styles = StyleSheet.create({
   option: {
     minHeight: layout.optionMinHeight,
     borderRadius: radii.option,
-    borderWidth: layout.hairline,
+    borderWidth: 1.5,
+    borderBottomWidth: 4,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
     flexDirection: 'row',
@@ -87,11 +105,11 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   dim: { opacity: 0.55 },
+  pressed: { borderBottomWidth: 1.5, marginTop: 2.5, backgroundColor: colors.inset },
   letter: {
-    width: 32,
-    height: 32,
-    borderRadius: radii.chip,
-    borderWidth: layout.hairline,
+    width: 34,
+    height: 34,
+    borderRadius: radii.input - 4,
     alignItems: 'center',
     justifyContent: 'center',
   },

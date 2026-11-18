@@ -5,13 +5,14 @@ interface Props {
   value: number;
   color?: ColorToken;
   height?: number;
+  track?: ColorToken;
 }
 
-export function ProgressBar({ value, color = 'primary', height = layout.barHeight }: Props) {
+export function ProgressBar({ value, color = 'primary', height = layout.barHeight, track = 'inset' }: Props) {
   const pct = Math.max(0, Math.min(1, value));
   return (
-    <View style={[styles.track, { height }]}>
-      <View style={[styles.fill, { width: `${pct * 100}%`, backgroundColor: colors[color] }]} />
+    <View style={[styles.track, { height, borderRadius: height, backgroundColor: colors[track] }]}>
+      <View style={[styles.fill, { width: `${pct * 100}%`, backgroundColor: colors[color], borderRadius: height }]} />
     </View>
   );
 }
@@ -27,8 +28,8 @@ export function SegmentedProgress({ total, done }: { total: number; done: number
 }
 
 const styles = StyleSheet.create({
-  track: { width: '100%', backgroundColor: colors.inset, borderRadius: radii.bar, overflow: 'hidden' },
-  fill: { height: '100%', borderRadius: radii.bar },
+  track: { width: '100%', overflow: 'hidden' },
+  fill: { height: '100%' },
   segments: { flexDirection: 'row', gap: 6 },
-  segment: { flex: 1, height: layout.progressHeight + 2, borderRadius: radii.bar },
+  segment: { flex: 1, height: layout.barHeight, borderRadius: radii.chip },
 });

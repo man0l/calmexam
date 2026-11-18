@@ -24,7 +24,7 @@ export function TabNavigator({ initialTab }: { initialTab?: keyof TabParamList }
         headerShown: false,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.inkFaint,
-        tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.border },
+        tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.border, borderTopWidth: 1.5 },
         tabBarLabelStyle: typography.tabLabel,
         sceneStyle: { backgroundColor: colors.bg },
         tabBarIcon: ({ focused }) => <Icon name={ICONS[route.name]} color={focused ? 'primary' : 'inkFaint'} />,
