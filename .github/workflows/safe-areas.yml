@@ -1,0 +1,49 @@
+name: Safe areas
+
+# Renders every demo screen of the Expo web build with fake iPhone (Dynamic
+# Island, home indicator, SE) and Android (gesture nav, 3-button nav, landscape
+# cutout) safe-area insets and fails if text or buttons land in an unsafe area.
+# Annotated screenshots are uploaded as the safe-area-audit artifact.
+
+concurrency:
+  group: safe-areas-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'App.tsx'
+      - 'src/**'
+      - 'scripts/safe-area-audit.mjs'
+      - '.github/workflows/safe-areas.yml'
+  pull_request:
+    paths:
+      - 'App.tsx'
+      - 'src/**'
+      - 'scripts/safe-area-audit.mjs'
+      - '.github/workflows/safe-areas.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx expo export --platform web
+      - run: npm i --no-save @playwright/test@1.61.1 && npx playwright install --with-deps chromium
+      - run: node scripts/safe-area-audit.mjs
+      - if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: safe-area-audit
+          path: safe-area-audit/

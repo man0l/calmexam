@@ -9,12 +9,12 @@ import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaInsetsContext, SafeAreaProvider } from 'react-native-safe-area-context';
 import { RootNavigator } from './src/navigation/RootNavigator';
 import type { TabParamList } from './src/navigation/types';
 import { OnboardingFlow, type OnboardingStep } from './src/screens/onboarding/OnboardingFlow';
 import { PaywallScreen } from './src/screens/PaywallScreen';
-import type { DemoConfig, DemoId } from './src/services/demo';
+import { readDemoInsets, type DemoConfig, type DemoId } from './src/services/demo';
 import { applyDemo } from './src/services/demoSeed';
 import { DemoReadyContext } from './src/store/DemoReadyContext';
 import { ProfileProvider, useProfile } from './src/store/ProfileContext';
@@ -25,6 +25,7 @@ import type { SessionParams } from './src/types';
 
 const DEMO_SEED = 7;
 const DEMO_TOPIC = 'sat-quadratics';
+const DEMO_INSETS = readDemoInsets();
 
 const DEMO_TABS: Partial<Record<DemoId, keyof TabParamList>> = {
   practice: 'Practice',
@@ -100,19 +101,22 @@ export default function App() {
       .catch(() => setDemo(null));
   }, []);
 
+  const content =
+    demo === undefined || !fontsReady ? (
+      <View style={styles.root} />
+    ) : (
+      <ProfileProvider>
+        <ProgressProvider>
+          <SubscriptionProvider>
+            <Root demo={demo} />
+          </SubscriptionProvider>
+        </ProgressProvider>
+      </ProfileProvider>
+    );
+
   return (
     <SafeAreaProvider>
-      {demo === undefined || !fontsReady ? (
-        <View style={styles.root} />
-      ) : (
-        <ProfileProvider>
-          <ProgressProvider>
-            <SubscriptionProvider>
-              <Root demo={demo} />
-            </SubscriptionProvider>
-          </ProgressProvider>
-        </ProfileProvider>
-      )}
+      {DEMO_INSETS ? <SafeAreaInsetsContext.Provider value={DEMO_INSETS}>{content}</SafeAreaInsetsContext.Provider> : content}
     </SafeAreaProvider>
   );
 }
