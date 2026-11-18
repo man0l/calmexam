@@ -6,7 +6,13 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const worker = (await import(join(here, '../dist/worker.js'))).default;
+// Build a copy with an empty build-time manifest so the "no manifest" checks don't depend on committed screenshots.
+const emptyManifest = join(here, '../dist/empty-manifest.json');
+const smokeOut = join(here, '../dist/worker-smoke.js');
+mkdirSync(join(here, '../dist'), { recursive: true });
+writeFileSync(emptyManifest, JSON.stringify({ screens: [], og: false, version: '' }));
+execFileSync(process.execPath, [join(here, '../build.mjs')], { env: { ...process.env, SCREENS_MANIFEST: emptyManifest, OUTFILE: smokeOut }, stdio: 'ignore' });
+const worker = (await import(smokeOut)).default;
 const previewDir = join(here, '../dist/preview');
 mkdirSync(previewDir, { recursive: true });
 
