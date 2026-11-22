@@ -83,18 +83,20 @@ async function appInfoText(appId) {
 async function versionText(versionId) {
   const locs = await asc('GET', `/v1/appStoreVersions/${versionId}/appStoreVersionLocalizations`);
   const base = locs.data.find((l) => l.attributes.locale === 'en-US')?.attributes ?? locs.data[0]?.attributes ?? {};
+  const supportUrl = locs.data.map((l) => l.attributes.supportUrl).find(Boolean) ?? 'https://calmexam.com';
   const out = {};
   for (const [locale, m] of Object.entries(META)) {
     const attrs = { description: m.description, keywords: m.keywords, promotionalText: m.promotionalText, whatsNew: m.whatsNew };
     const ex = locs.data.find((l) => l.attributes.locale === locale);
     if (ex) {
-      await asc('PATCH', `/v1/appStoreVersionLocalizations/${ex.id}`, { data: { type: 'appStoreVersionLocalizations', id: ex.id, attributes: attrs } });
+      const fill = ex.attributes.supportUrl ? {} : { supportUrl };
+      await asc('PATCH', `/v1/appStoreVersionLocalizations/${ex.id}`, { data: { type: 'appStoreVersionLocalizations', id: ex.id, attributes: { ...attrs, ...fill } } });
       out[locale] = ex.id;
     } else {
       const r = await asc('POST', '/v1/appStoreVersionLocalizations', {
         data: {
           type: 'appStoreVersionLocalizations',
-          attributes: { locale, ...attrs, supportUrl: base.supportUrl ?? 'https://calmexam.com', marketingUrl: base.marketingUrl ?? 'https://calmexam.com' },
+          attributes: { locale, ...attrs, supportUrl, marketingUrl: base.marketingUrl ?? 'https://calmexam.com' },
           relationships: { appStoreVersion: { data: { type: 'appStoreVersions', id: versionId } } },
         },
       });
