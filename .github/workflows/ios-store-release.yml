@@ -1,0 +1,33 @@
+name: iOS Store Release
+
+concurrency:
+  group: ios-store-release
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      submit:
+        description: Submit the version for App Review after preparing it
+        required: true
+        default: false
+        type: boolean
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+
+      - name: Prepare App Store version (metadata, screenshots, build) and optionally submit
+        env:
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
+          SUBMIT: ${{ inputs.submit }}
+        run: node scripts/asc-release.mjs
