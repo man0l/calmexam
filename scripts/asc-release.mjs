@@ -7,7 +7,7 @@ const VERSION = process.env.VERSION ?? JSON.parse(await readFile('app.json', 'ut
 const SUBMIT = process.env.SUBMIT === 'true';
 const META = JSON.parse(await readFile(resolve('store/ios/metadata.json'), 'utf8'));
 const SHOTS = resolve('store/ios/screenshots');
-const DISPLAY = process.env.SCREENSHOT_DISPLAY_TYPE ?? 'APP_IPHONE_67';
+const DISPLAY = process.env.SCREENSHOT_DISPLAY_TYPE ?? 'APP_IPHONE_65';
 const KEY_ID = process.env.APP_STORE_CONNECT_KEY_ID;
 const ISSUER = process.env.APP_STORE_CONNECT_ISSUER_ID;
 const KEY = Buffer.from(process.env.APP_STORE_CONNECT_API_KEY_BASE64 ?? '', 'base64').toString('utf8');
@@ -132,6 +132,13 @@ async function screenshots(locIds) {
     }
     const files = (await readdir(dir)).filter((f) => f.endsWith('.png')).sort().map((f) => join(dir, f));
     const sets = await asc('GET', `/v1/appStoreVersionLocalizations/${locId}/appScreenshotSets`);
+    for (const other of sets.data.filter((x) => x.attributes.screenshotDisplayType !== DISPLAY)) {
+      const shots = await asc('GET', `/v1/appScreenshotSets/${other.id}/appScreenshots?limit=50`);
+      if (shots.data.some((x) => x.attributes.assetDeliveryState?.state === 'FAILED')) {
+        await asc('DELETE', `/v1/appScreenshotSets/${other.id}`);
+        console.log(`${locale}: removed ${other.attributes.screenshotDisplayType} set with failed screenshots`);
+      }
+    }
     let set = sets.data.find((s) => s.attributes.screenshotDisplayType === DISPLAY);
     if (!set) {
       set = (await asc('POST', '/v1/appScreenshotSets', {
