@@ -1,6 +1,6 @@
 import { EXAMS, generateSet, topicsFor } from '../../../src/engine';
 import { HUB_COPY } from '../content';
-import { CONTACT, ORIGIN, hubPath } from '../site';
+import { APP_STORE_URL, CONTACT, ORIGIN, hubPath } from '../site';
 import { Faq, badges, faqLd, faqSection, page, waitlistForm } from './layout';
 import { practiceSection, quizLd } from './practice';
 import { gallery, heroPhone } from './screens';
@@ -12,8 +12,8 @@ const FAQS: Faq[] = [
     a: 'CalmExam is an exam math coach for SAT Math, AP Calculus AB and A-Level Maths. It gives you unlimited practice where every answer is verified by a generator, a daily plan built around your exam date, and an "explain my mistake" coach grounded in the verified steps.',
   },
   {
-    q: 'When does the app launch?',
-    a: 'The CalmExam app is coming soon on iOS and Android. Join the waitlist and we will send you one email when it is available. Until then, the practice sets on this website are free to use.',
+    q: 'Where can I get the app?',
+    a: 'CalmExam is available now on the App Store for iPhone and iPad. The Android app is coming soon: join the waitlist and we will send you one email when it is on Google Play. The practice sets on this website stay free to use.',
   },
   {
     q: 'How can every answer be right?',
@@ -25,7 +25,7 @@ const FAQS: Faq[] = [
   },
   {
     q: 'Is CalmExam free?',
-    a: 'The practice sets on calmexam.com are free with no account. The app will be free to download with an optional paid plan for extras; pricing will be clear before you pay anything.',
+    a: 'The practice sets on calmexam.com are free with no account. The app is free to download with unlimited practice. An optional Pro plan adds unlimited mistake explanations and the full daily plan, and the price is shown before you pay anything.',
   },
   {
     q: 'Is CalmExam affiliated with the College Board or UK exam boards?',
@@ -45,8 +45,8 @@ export function homePage(seed: number, state?: 'joined' | 'error' | 'server'): s
 <div>
 <h1 id="hero-h">Exam math practice that's <em>never wrong</em></h1>
 <p class="lead">Unlimited SAT Math, AP Calculus AB and A-Level Maths practice where every answer is verified by a generator, a 5-question placement that builds your daily plan, and a calm coach that explains your mistakes using the real steps.</p>
-${waitlistForm('hero', 'home-hero', state)}
 ${badges()}
+${waitlistForm('hero', 'home-hero', state)}
 </div>
 ${heroPhone('today', 'CalmExam app: today’s session, a weekly streak and a stepping-stone path of your weakest topics')}
 </div></section>
@@ -62,7 +62,7 @@ ${heroPhone('today', 'CalmExam app: today’s session, a weekly streak and a ste
 
 <section class="band" aria-labelledby="screens-h"><div class="wrap">
 <h2 id="screens-h">A calm app, one problem at a time</h2>
-<p class="lead">No confetti, no red badges, no countdown pressure. Just the next useful problem and an answer you can trust. Screens are previews and may change before launch.</p>
+<p class="lead">No confetti, no red badges, no countdown pressure. Just the next useful problem and an answer you can trust.</p>
 <div style="margin-top:36px">${gallery()}</div>
 </div></section>
 
@@ -96,11 +96,11 @@ ${practiceSection({ exam: 'sat', problems, title: 'Try a free SAT Math practice 
 ${faqSection(FAQS)}
 
 <section class="cta band" aria-labelledby="cta-h"><div class="wrap narrow">
-<h2 id="cta-h">Be first to practise with CalmExam</h2>
-<p class="lead" style="margin:0 auto 28px">One email at launch. No spam, and you can ask us to delete your email any time at ${CONTACT}.</p>
+<h2 id="cta-h">Start practising with CalmExam today</h2>
+<p class="lead" style="margin:0 auto 28px">Free on the App Store for iPhone and iPad. On Android? Join the waitlist for one email at launch. No spam, and you can ask us to delete your email any time at ${CONTACT}.</p>
 <div class="card" style="max-width:600px;margin:0 auto;color:var(--ink)">
-${waitlistForm('cta', 'home-bottom')}
 ${badges()}
+${waitlistForm('cta', 'home-bottom')}
 </div>
 </div></section>`;
 
@@ -108,11 +108,21 @@ ${badges()}
     path: '/',
     title: "CalmExam: SAT Math, AP Calculus & A-Level Maths Practice That's Never Wrong",
     description:
-      'Unlimited SAT Math, AP Calculus AB and A-Level Maths practice where every answer is verified, plus an AI coach that explains your mistakes. Free practice sets; app coming soon.',
+      'Unlimited SAT Math, AP Calculus AB and A-Level Maths practice where every answer is verified, plus an AI coach that explains your mistakes. Free practice sets and a free iOS app.',
     body,
     jsonLd: [
       { '@context': 'https://schema.org', '@type': 'Organization', name: 'CalmExam', url: ORIGIN, logo: ORIGIN + '/favicon.svg', email: CONTACT },
       { '@context': 'https://schema.org', '@type': 'WebSite', name: 'CalmExam', url: ORIGIN },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'MobileApplication',
+        name: 'CalmExam',
+        operatingSystem: 'iOS',
+        applicationCategory: 'EducationalApplication',
+        installUrl: APP_STORE_URL,
+        url: ORIGIN,
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      },
       quizLd({ name: 'Free SAT Math practice set', url: ORIGIN + '/', about: 'SAT Math', level: 'High school', problems }),
       faqLd(FAQS),
     ],

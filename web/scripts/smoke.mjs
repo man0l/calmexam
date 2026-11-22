@@ -85,7 +85,8 @@ const countProblems = (h) => (h.match(/<li class="problem" data-id="[a-z]/g) || 
   const h = await r.text();
   check('home 200', r.status === 200);
   check('home waitlist form', h.includes('action="/api/waitlist"') && h.includes('name="email"') && h.includes('name="platform"'));
-  check('home badges', h.includes('/assets/badges/app-store-badge.svg') && h.includes('/assets/badges/google-play-badge.png') && h.includes('Coming soon'));
+  check('home badges', h.includes('/assets/badges/app-store-badge.svg') && h.includes('/assets/badges/google-play-badge.png') && h.includes('Android coming soon'));
+  check('home app store link', h.includes('https://apps.apple.com/app/calmexam/id6836514358') && h.includes('<meta name="apple-itunes-app" content="app-id=6836514358">'));
   check('home 3 problems', countProblems(h) === 3, String(countProblems(h)));
   check('home gallery 6 screens', (h.match(/<figure>/g) || []).length === 6);
   check('home cache header', r.headers.get('cache-control') === 'public, max-age=600');

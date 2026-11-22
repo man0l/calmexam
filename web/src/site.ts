@@ -2,6 +2,8 @@ import { EXAMS, ExamId, Exam, Topic, TOPICS, getExam } from '../../src/engine';
 
 export const ORIGIN = 'https://calmexam.com';
 export const CONTACT = 'hello@calmexam.com';
+export const APP_STORE_ID = '6836514358';
+export const APP_STORE_URL = `https://apps.apple.com/app/calmexam/id${APP_STORE_ID}`;
 
 export const EXAM_PREFIX: Record<ExamId, string> = {
   sat: 'sat-math',

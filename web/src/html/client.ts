@@ -15,7 +15,7 @@ d.querySelectorAll("form[data-wl]").forEach(function(f){
     fd.forEach(function(v,k){o[k]=String(v)});
     m.className="msg";m.textContent="Joining…";b.disabled=true;
     post("/api/waitlist",o).then(function(j){
-      if(j.ok){m.className="msg ok";m.textContent=j.already?"You're on the list (you were already signed up).":"You're on the list. We'll email you once at launch.";f.reset()}
+      if(j.ok){m.className="msg ok";m.textContent=j.already?"You're on the list (you were already signed up).":"You're on the list. We'll email you once when the Android app launches.";f.reset()}
       else{m.className="msg err";m.textContent=j.error==="invalid_email"?"Please enter a valid email address.":"Something went wrong. Please try again."}
     }).catch(function(){m.className="msg err";m.textContent="Network error. Please try again."}).then(function(){b.disabled=false});
   });

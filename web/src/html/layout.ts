@@ -1,5 +1,5 @@
 import { EXAMS, TOPICS } from '../../../src/engine';
-import { CONTACT, ORIGIN, hubPath, topicPath } from '../site';
+import { APP_STORE_ID, APP_STORE_URL, CONTACT, ORIGIN, hubPath, topicPath } from '../site';
 import { CLIENT_JS } from './client';
 import { hasOg, ogPath } from './screens';
 import { CSS } from './styles';
@@ -40,7 +40,7 @@ ${o.noindex ? '<meta name="robots" content="noindex">' : `<link rel="canonical" 
 <meta property="og:url" content="${url}">
 ${hasOg() ? `<meta property="og:image" content="${ORIGIN}${ogPath()}">\n<meta property="og:image:width" content="1200">\n<meta property="og:image:height" content="630">\n<meta name="twitter:card" content="summary_large_image">` : '<meta name="twitter:card" content="summary">'}
 <meta name="theme-color" content="#F4F7F5">
-<!-- TODO(app launch): <meta name="apple-itunes-app" content="app-id=APP_STORE_ID"> once the App Store id exists -->
+<meta name="apple-itunes-app" content="app-id=${APP_STORE_ID}">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -68,7 +68,7 @@ function header(): string {
 <a class="hide-sm" href="${hubPath('sat')}">SAT Math</a>
 <a class="hide-sm" href="${hubPath('ap-calc-ab')}">AP Calculus</a>
 <a class="hide-sm" href="${hubPath('a-level')}">A-Level Maths</a>
-<a class="btn" href="/#join">Join waitlist</a>
+<a class="btn" href="${APP_STORE_URL}" rel="noopener">Get the app</a>
 </nav>
 </div></header>`;
 }
@@ -83,7 +83,7 @@ function footer(): string {
 <div class="cols">
 <div><a class="brand" href="/">${LOGO_SVG}<span>CalmExam</span></a>
 <p style="margin-top:12px">The exam coach that's never wrong. Unlimited verified practice for SAT Math, AP Calculus AB and A-Level Maths.</p>
-<ul><li><a href="/#join">Join the waitlist</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li><li><a href="mailto:${CONTACT}">${CONTACT}</a></li></ul></div>
+<ul><li><a href="${APP_STORE_URL}" rel="noopener">Download on the App Store</a></li><li><a href="/#join">Android waitlist</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li><li><a href="mailto:${CONTACT}">${CONTACT}</a></li></ul></div>
 ${examCols}
 </div>
 <p class="legal">© ${new Date().getUTCFullYear()} CalmExam. SAT® and AP® are trademarks registered by the College Board, which is not affiliated with, and does not endorse, CalmExam. A-Level exam boards are not affiliated with CalmExam.</p>
@@ -92,37 +92,33 @@ ${examCols}
 
 export function badges(): string {
   return `<div class="badges">
-<p class="soon">Coming soon on <span>iOS &amp; Android</span></p>
+<p class="soon">Available now on <span>iPhone &amp; iPad</span> · Android coming soon</p>
 <div class="row">
-<a href="/#join" aria-label="App Store: coming soon. Join the waitlist"><img class="apple" src="/assets/badges/app-store-badge.svg" width="120" height="40" alt="Download on the App Store"></a>
-<a href="/#join" aria-label="Google Play: coming soon. Join the waitlist"><img class="google" src="/assets/badges/google-play-badge.png" width="154" height="60" alt="Get it on Google Play"></a>
+<a href="${APP_STORE_URL}" rel="noopener" aria-label="Download CalmExam on the App Store"><img class="apple" src="/assets/badges/app-store-badge.svg" width="120" height="40" alt="Download on the App Store"></a>
+<a href="/#join" aria-label="Google Play: coming soon. Join the Android waitlist"><img class="google" src="/assets/badges/google-play-badge.png" width="154" height="60" alt="Get it on Google Play"></a>
 </div></div>`;
 }
 
 export function waitlistForm(id: string, source: string, state?: 'joined' | 'error' | 'server'): string {
   const notice =
     state === 'joined'
-      ? `<p class="thanks" role="status">Thanks, you're on the list. We'll email you once when the app launches.</p>`
+      ? `<p class="thanks" role="status">Thanks, you're on the list. We'll email you once when the Android app launches.</p>`
       : state === 'error'
         ? `<p class="thanks err" role="alert">That email didn't look right. Please try again.</p>`
         : state === 'server'
           ? `<p class="thanks err" role="alert">Something went wrong on our side. Please try again in a minute.</p>`
           : '';
-  return `${notice}<form class="wl" data-wl method="post" action="/api/waitlist" aria-label="Join the CalmExam waitlist">
+  return `${notice}<form class="wl" data-wl method="post" action="/api/waitlist" aria-label="Join the CalmExam Android waitlist">
 <input type="hidden" name="source" value="${esc(source)}">
 <div class="field"><label for="${id}-email">Email</label><input id="${id}-email" type="email" name="email" required maxlength="254" autocomplete="email" placeholder="you@example.com"></div>
 <div class="row2">
 <div class="field"><label for="${id}-exam">Your exam</label><select id="${id}-exam" name="exam">
 <option value="sat">SAT Math</option><option value="ap-calc-ab">AP Calculus AB</option><option value="a-level">A-Level Maths</option><option value="other">Something else</option></select></div>
-<fieldset class="field seg"><legend>Phone</legend><div class="opts">
-<label><input type="radio" name="platform" value="ios"><span>iOS</span></label>
-<label><input type="radio" name="platform" value="android"><span>Android</span></label>
-<label><input type="radio" name="platform" value="both" checked><span>Both</span></label>
-</div></fieldset>
+<input type="hidden" name="platform" value="android">
 </div>
-<button class="btn" type="submit">Join the waitlist</button>
+<button class="btn" type="submit">Join the Android waitlist</button>
 <p class="msg" aria-live="polite"></p>
-<p class="faint" style="margin:0">One email when the app launches. No spam. <a href="/privacy">Privacy</a></p>
+<p class="faint" style="margin:0">One email when the Android app launches. No spam. <a href="/privacy">Privacy</a></p>
 </form>`;
 }
 
@@ -157,10 +153,10 @@ export function breadcrumbLd(items: { name: string; path: string }[]) {
 export function ctaSection(source: string, title = 'Get a daily plan built around your exam date'): string {
   return `<section class="cta band" aria-labelledby="cta-h"><div class="wrap narrow">
 <h2 id="cta-h">${esc(title)}</h2>
-<p class="lead" style="margin:0 auto 28px">The CalmExam app turns verified problems like these into a 5-question placement, a short daily plan and an "explain my mistake" coach. Join the waitlist and we'll email you once at launch.</p>
+<p class="lead" style="margin:0 auto 28px">The CalmExam app turns verified problems like these into a 5-question placement, a short daily plan and an "explain my mistake" coach. It's free on the App Store; on Android, join the waitlist and we'll email you once at launch.</p>
 <div class="card" style="max-width:600px;margin:0 auto;color:var(--ink)">
-${waitlistForm('cta', source)}
 ${badges()}
+${waitlistForm('cta', source)}
 </div>
 </div></section>`;
 }
