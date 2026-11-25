@@ -139,6 +139,7 @@ export function templatesMatching(opts: Omit<SetOptions, 'count' | 'seed'>): Tem
 export function generateSet(opts: SetOptions): Problem[] {
   const matching = templatesMatching(opts);
   const pool = matching.length ? matching : templatesFor(opts.exam, opts.topicId);
+  if (!pool.length) return [];
   const filterKey = (opts.difficulty ?? []).join('') + (opts.style ?? '');
   const rng = new Rng(opts.seed ^ hash(opts.exam + (opts.topicId ?? '') + filterKey));
   const order = rng.shuffle(pool);

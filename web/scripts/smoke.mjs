@@ -78,6 +78,9 @@ async function call(path, init = {}, host = 'calmexam.com') {
 }
 
 const countProblems = (h) => (h.match(/<li class="problem" data-id="[a-z]/g) || []).length;
+const prompts = (h) => [...h.matchAll(/<p class="prompt">([^<]*)<\/p>/g)].map((m) => m[1]);
+const noDupes = (h) => new Set(prompts(h)).size === prompts(h).length;
+const PAGE_PROBLEMS = 25;
 
 // Home
 {
@@ -103,7 +106,10 @@ const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
 check('sitemap 200', sitemapRes.status === 200 && sitemapRes.headers.get('content-type').includes('xml'));
 const hubs = ['/sat-math-practice-test', '/ap-calculus-practice-test', '/a-level-maths-practice-questions'];
 const topicLocs = locs.filter((l) => l.endsWith('-practice-problems'));
-check('sitemap has 21 topics', topicLocs.length === 21, String(topicLocs.length));
+check('sitemap has 36 topics', topicLocs.length === 36, String(topicLocs.length));
+check('sitemap lastmod is fixed', [...sitemap.matchAll(/<lastmod>([^<]+)<\/lastmod>/g)].every((m) => m[1] === '2026-11-25'));
+const landings = ['/sat-math-questions', '/hard-sat-math-questions', '/easy-sat-math-questions', '/desmos-sat-math', '/ap-calc-ab-frq', '/ap-calculus-ab-practice-questions', '/edexcel-a-level-maths-practice-questions', '/aqa-a-level-maths-practice-questions', '/ocr-a-level-maths-practice-questions'];
+for (const p of landings) check(`sitemap lists ${p}`, locs.includes('https://calmexam.com' + p));
 check('sitemap absolute https', locs.every((l) => l.startsWith('https://calmexam.com/')));
 for (const p of [...hubs, '/privacy', '/terms', '/']) check(`sitemap lists ${p}`, locs.includes('https://calmexam.com' + (p === '/' ? '/' : p)));
 
@@ -111,7 +117,9 @@ for (const p of hubs) {
   const r = await call(p);
   const h = await r.text();
   check(`hub ${p} 200`, r.status === 200);
-  check(`hub ${p} 10 problems`, countProblems(h) === 10, String(countProblems(h)));
+  check(`hub ${p} ${PAGE_PROBLEMS} problems`, countProblems(h) === PAGE_PROBLEMS, String(countProblems(h)));
+  check(`hub ${p} no duplicate questions`, noDupes(h));
+  check(`hub ${p} core set fixed`, prompts(h).slice(0, 15).join() === prompts(await (await call(p)).text()).slice(0, 15).join());
   check(`hub ${p} schema`, h.includes('"Quiz"') && h.includes('"FAQPage"') && h.includes(`<link rel="canonical" href="https://calmexam.com${p}">`));
   writeFileSync(join(previewDir, p.slice(1) + '.html'), h);
 }
@@ -120,12 +128,27 @@ for (const loc of topicLocs) {
   const p = loc.replace('https://calmexam.com', '');
   const r = await call(p);
   const h = await r.text();
-  const ok = r.status === 200 && countProblems(h) === 10 && h.includes('"Quiz"') && h.includes('"FAQPage"');
+  const ok = r.status === 200 && countProblems(h) === PAGE_PROBLEMS && noDupes(h) && h.includes('"Quiz"') && h.includes('"FAQPage"') && h.includes('"BreadcrumbList"') && h.includes('Exam tip:');
   check(`topic ${p}`, ok, `${r.status} ${countProblems(h)}`);
   if (ok) topicOk++;
   if (p === '/sat-math/quadratics-practice-problems' || p === '/a-level-maths/mechanics-practice-problems') {
     writeFileSync(join(previewDir, p.slice(1).replace('/', '__') + '.html'), h);
   }
+}
+
+check('all topic pages', topicOk === topicLocs.length, `${topicOk}/${topicLocs.length}`);
+for (const p of landings) {
+  const r = await call(p);
+  const h = await r.text();
+  const ok = r.status === 200 && countProblems(h) === PAGE_PROBLEMS && noDupes(h) && h.includes('"FAQPage"') && h.includes('"BreadcrumbList"') && h.includes(`<link rel="canonical" href="https://calmexam.com${p}">`);
+  check(`landing ${p}`, ok, `${r.status} ${countProblems(h)}`);
+  writeFileSync(join(previewDir, p.slice(1) + '.html'), h);
+}
+{
+  const h = await (await call('/hard-sat-math-questions')).text();
+  check('hard page only stretch', (h.match(/<span class="lvl">(Warm-up|Core)<\/span>/g) || []).length === 0);
+  const f = await (await call('/ap-calc-ab-frq')).text();
+  check('frq page only frq', (f.match(/FRQ style<\/span><\/p>/g) || []).length === PAGE_PROBLEMS);
 }
 
 // Static-ish routes
@@ -284,7 +307,7 @@ const postJson = (path, body) =>
   Date.now = realNow;
 }
 
-console.log(`topics ok: ${topicOk}/21`);
+console.log(`topics ok: ${topicOk}/${topicLocs.length}`);
 console.log(`smoke: ${passed} passed, ${failed} failed`);
 console.log(`previews written to dist/preview/`);
 process.exit(failed ? 1 : 0);
