@@ -1,5 +1,5 @@
 import { EXAMS, TOPICS } from '../../../src/engine';
-import { APP_STORE_ID, APP_STORE_URL, CONTACT, ORIGIN, hubPath, topicPath } from '../site';
+import { APP_STORE_ID, APP_STORE_URL, CONTACT, ORIGIN, hubPath, landingFor, landingPath, topicPath } from '../site';
 import { CLIENT_JS } from './client';
 import { hasOg, ogPath } from './screens';
 import { CSS } from './styles';
@@ -75,7 +75,9 @@ function header(): string {
 
 function footer(): string {
   const examCols = EXAMS.map(
-    (e) => `<div><h2><a href="${hubPath(e.id)}">${esc(e.name)}</a></h2><ul>${TOPICS.filter((t) => t.exam === e.id)
+    (e) => `<div><h2><a href="${hubPath(e.id)}">${esc(e.name)}</a></h2><ul>${landingFor(e.id)
+      .map((l) => `<li><a href="${landingPath(l)}">${esc(l.crumb)}</a></li>`)
+      .join('')}${TOPICS.filter((t) => t.exam === e.id)
       .map((t) => `<li><a href="${topicPath(t)}">${esc(t.name)}</a></li>`)
       .join('')}</ul></div>`,
   ).join('');

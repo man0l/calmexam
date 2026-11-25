@@ -18,12 +18,17 @@ export interface Topic {
   blurb: string;
 }
 
+export type Difficulty = 1 | 2 | 3;
+
+export type QuestionStyle = 'mcq' | 'frq';
+
 export interface Problem {
   id: string;
   templateId: string;
   exam: ExamId;
   topicId: string;
-  difficulty: 1 | 2 | 3;
+  difficulty: Difficulty;
+  style: QuestionStyle;
   prompt: string;
   choices: string[];
   answerIndex: number;
@@ -45,7 +50,8 @@ export interface Template {
   id: string;
   exam: ExamId;
   topicId: string;
-  difficulty: 1 | 2 | 3;
+  difficulty: Difficulty;
+  style?: QuestionStyle;
   build: (r: Rng) => Draft;
 }
 
@@ -204,6 +210,7 @@ export function buildProblem(t: Template, seed: number): Problem {
       exam: t.exam,
       topicId: t.topicId,
       difficulty: t.difficulty,
+      style: t.style ?? 'mcq',
       prompt: tidy(d.prompt),
       choices,
       answerIndex: choices.indexOf(answer),
