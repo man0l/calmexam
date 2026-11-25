@@ -196,17 +196,17 @@ export const LANDINGS: Landing[] = [
       },
     ],
   },
-  // "desmos sat math", "how to use desmos on the sat"
+  // "desmos sat", "desmos sat calculator", "desmos sat tricks", "desmos sat math", "how to use desmos on the sat"
   {
     slug: 'desmos-sat-math',
     exam: 'sat',
-    title: 'How to Use Desmos on SAT Math: A Practical Guide | CalmExam SAT Math',
+    title: 'Desmos SAT Calculator: How to Use It, 6 Tricks and Practice | CalmExam SAT Math',
     description:
-      'How to use the built-in Desmos graphing calculator on the Digital SAT: solve equations, systems and quadratics by graphing, use sliders and tables, and know when not to.',
-    h1: 'How to use Desmos on SAT Math',
-    lead: 'The Digital SAT has the Desmos graphing calculator built in for the whole Math section. Used well, it turns long algebra into a quick check. Here is how to use it, and when not to.',
-    card: 'Use the built-in graphing calculator to solve and check questions faster.',
-    crumb: 'Desmos for SAT Math',
+      'How to use the Desmos SAT calculator built into the Digital SAT: 6 tricks for equations, systems, quadratics, sliders and regression, when not to use it, and free questions to practise on.',
+    h1: 'The Desmos SAT calculator: how to use it',
+    lead: 'The Digital SAT has the Desmos graphing calculator built in for the whole Math section. Used well, it turns long algebra into a quick check. Here are six Desmos SAT tricks, when not to use it, and questions to practise on.',
+    card: 'Six Desmos SAT calculator tricks to solve and check questions faster.',
+    crumb: 'Desmos SAT calculator',
     guideFirst: true,
     set: { difficulty: [2, 3], coreSeed: 3404, coreTitle: 'Practise with Desmos: 15 SAT Math questions', dailyTitle: "Today's extra questions to try with Desmos" },
     sections: [
@@ -218,13 +218,14 @@ export const LANDINGS: Landing[] = [
         ],
       },
       {
-        h: 'Five Desmos moves that save time',
+        h: 'Six Desmos SAT tricks that save time',
         list: [
           'Solve an equation by graphing both sides. Type the left side as y = … and the right side as y = …, then click the intersection. The x-coordinate is the solution.',
           'Solve a system of equations. Type both equations exactly as given (Desmos accepts forms like 3x + 2y = 12) and click where the lines cross.',
           'Read a quadratic. Type the equation and click the graph: Desmos marks the vertex, the zeros and the y-intercept.',
           'Use a slider for an unknown constant. Type an equation with a letter such as k and add the slider. Drag it to see which value makes the graphs touch, cross or never meet.',
           'Check a choice. Graph your answer, or type the expression with the answer substituted, to confirm it before you move on.',
+          'Fit a line to data. Put the points in a table (x₁ and y₁ columns), then type y₁ ~ mx₁ + b. Desmos gives the line of best fit with m and b, which answers most scatterplot and model questions.',
         ],
       },
       {
@@ -242,6 +243,10 @@ export const LANDINGS: Landing[] = [
       {
         q: 'Can you use Desmos on the whole SAT Math section?',
         a: 'Yes. On the Digital SAT a calculator is allowed on every Math question, and the Desmos graphing calculator is built into the Bluebook app.',
+      },
+      {
+        q: 'Where do you find the Desmos SAT calculator?',
+        a: 'In the Bluebook test app, click the Calculator button at the top of any Math question. To practise before test day, use the free Desmos graphing calculator online or the practice tests in Bluebook.',
       },
       {
         q: 'Is Desmos on the SAT the same as the free Desmos website?',
