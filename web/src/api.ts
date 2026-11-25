@@ -1,4 +1,4 @@
-import { EXAMS, ExamId, Problem, TEMPLATES, generateSet, getTopic, problemFromId } from '../../src/engine';
+import { Difficulty, EXAMS, ExamId, Problem, QuestionStyle, TEMPLATES, generateSet, getTopic, problemFromId } from '../../src/engine';
 import type { Env } from './env';
 
 export const CORS: Record<string, string> = {
@@ -186,8 +186,14 @@ export function handleProblems(url: URL): Response {
   const count = Number.isFinite(countIn) ? Math.max(1, Math.min(20, Math.floor(countIn))) : 10;
   const seedIn = Number(q.get('seed'));
   const seed = q.get('seed') !== null && Number.isFinite(seedIn) ? Math.abs(Math.floor(seedIn)) % 2147483647 : Math.floor(Math.random() * 1e9);
+  const levels = (q.get('difficulty') ?? '')
+    .split(',')
+    .map(Number)
+    .filter((d): d is Difficulty => d === 1 || d === 2 || d === 3);
+  const styleIn = q.get('style');
+  const style: QuestionStyle | undefined = styleIn === 'frq' || styleIn === 'mcq' ? styleIn : undefined;
   try {
-    return json({ problems: generateSet({ exam, topicId: topic, count, seed }) });
+    return json({ problems: generateSet({ exam, topicId: topic, count, seed, difficulty: levels.length ? levels : undefined, style }) });
   } catch (err) {
     console.error('generateSet failed', String(err));
     return json({ ok: false, error: 'generation_failed' }, 500);

@@ -22,7 +22,7 @@ d.querySelectorAll("form[data-wl]").forEach(function(f){
 });
 function renderProblem(p,i,names){
   var h='<li class="problem" data-id="'+esc(p.id)+'" data-answer="'+p.answerIndex+'">'
-  +'<p class="pmeta"><span>Question '+(i+1)+'</span><span aria-hidden="true">·</span><span>'+esc(names[p.topicId]||"")+'</span><span class="lvl">'+["","Warm-up","Core","Stretch"][p.difficulty]+'</span></p>'
+  +'<p class="pmeta"><span>Question '+(i+1)+'</span><span aria-hidden="true">·</span><span>'+esc(names[p.topicId]||"")+'</span><span class="lvl">'+["","Warm-up","Core","Stretch"][p.difficulty]+'</span>'+(p.style==="frq"?'<span class="lvl">FRQ style</span>':'')+'</p>'
   +'<p class="prompt">'+esc(p.prompt)+'</p><div class="choices" role="group" aria-label="Answer choices for question '+(i+1)+'">';
   p.choices.forEach(function(c,k){h+='<button type="button" class="choice" data-i="'+k+'" aria-pressed="false"><span class="l" aria-hidden="true">'+L[k]+'</span><span class="t">'+esc(c)+'</span></button>'});
   h+='</div><p class="fb" aria-live="polite"></p><details class="sol"><summary>Show verified answer and steps</summary>'
@@ -60,7 +60,7 @@ d.addEventListener("click",function(e){
     return;
   }
   if(t.hasAttribute("data-newset")){
-    var s=t.closest("[data-practice]"),list=s.querySelector(".problems"),q="exam="+encodeURIComponent(s.dataset.exam)+(s.dataset.topic?"&topic="+encodeURIComponent(s.dataset.topic):"")+"&count="+s.dataset.count+"&seed="+Math.floor(Math.random()*1e9);
+    var s=t.closest("[data-practice]"),list=s.querySelector(".problems"),q="exam="+encodeURIComponent(s.dataset.exam)+(s.dataset.topic?"&topic="+encodeURIComponent(s.dataset.topic):"")+(s.dataset.difficulty?"&difficulty="+encodeURIComponent(s.dataset.difficulty):"")+(s.dataset.style?"&style="+encodeURIComponent(s.dataset.style):"")+"&count="+s.dataset.count+"&seed="+Math.floor(Math.random()*1e9);
     var names={};try{names=JSON.parse(s.dataset.names||"{}")}catch(_){}
     t.disabled=true;
     fetch("/api/problems?"+q).then(function(r){return r.json()}).then(function(j){

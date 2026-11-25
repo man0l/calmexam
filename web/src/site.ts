@@ -1,4 +1,7 @@
 import { EXAMS, ExamId, Exam, Topic, TOPICS, getExam } from '../../src/engine';
+import { LANDINGS, Landing } from './landing';
+
+export { findLanding } from './landing';
 
 export const ORIGIN = 'https://calmexam.com';
 export const CONTACT = 'hello@calmexam.com';
@@ -32,6 +35,14 @@ export function daySeed(now = Date.now()): number {
   return Math.floor(now / 86400000);
 }
 
+export function landingPath(l: Landing): string {
+  return '/' + l.slug;
+}
+
+export function landingFor(exam: ExamId): Landing[] {
+  return LANDINGS.filter((l) => l.exam === exam);
+}
+
 export function allPaths(): string[] {
-  return ['/', ...EXAMS.map((e) => hubPath(e.id)), ...TOPICS.map(topicPath), '/privacy', '/terms'];
+  return ['/', ...EXAMS.map((e) => hubPath(e.id)), ...LANDINGS.map(landingPath), ...TOPICS.map(topicPath), '/privacy', '/terms'];
 }

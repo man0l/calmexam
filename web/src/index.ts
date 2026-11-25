@@ -4,12 +4,14 @@ import { withAIBotTracking } from 'indiestack-ai-bots';
 import { CORS, handleExplain, handleHealth, handleProblems, handleWaitlist, json } from './api';
 import type { Env } from './env';
 import { hubPage, topicPage } from './html/exam-pages';
+import { landingPage } from './html/landing';
 import { homePage } from './html/home';
 import { INDIESTACK_ORIGIN, INDIESTACK_SITE, LOGO_SVG } from './html/layout';
 import { notFoundPage, privacyPage, termsPage } from './html/legal';
 import { hasOg, hasScreenPng } from './html/screens';
 import { RAW_BASE, activeManifest, loadManifest, setActiveManifest } from './manifest';
-import { ORIGIN, allPaths, daySeed, findHub, findTopic } from './site';
+import { CONTENT_UPDATED } from './content';
+import { ORIGIN, allPaths, daySeed, findHub, findLanding, findTopic } from './site';
 
 const SECURITY_HEADERS: Record<string, string> = {
   'X-Content-Type-Options': 'nosniff',
@@ -40,14 +42,14 @@ function text(body: string, type: string): Response {
   return new Response(body, { headers: { 'Content-Type': `${type}; charset=utf-8`, 'Cache-Control': 'public, max-age=3600' } });
 }
 
+// lastmod is the date the page content last changed, not today: the core sets are fixed, only the daily set rotates.
 function sitemap(): string {
-  const today = new Date().toISOString().slice(0, 10);
   const urls = allPaths()
     .map((p) => {
       const legal = p === '/privacy' || p === '/terms';
-      const pri = p === '/' ? '1.0' : legal ? '0.2' : p.split('/').length === 2 ? '0.9' : '0.7';
-      const freq = legal ? 'yearly' : 'daily';
-      return `<url><loc>${ORIGIN}${p}</loc><lastmod>${today}</lastmod><changefreq>${freq}</changefreq><priority>${pri}</priority></url>`;
+      const pri = p === '/' ? '1.0' : legal ? '0.2' : findHub(p) ? '0.9' : findLanding(p) ? '0.8' : '0.7';
+      const freq = legal ? 'yearly' : 'weekly';
+      return `<url><loc>${ORIGIN}${p}</loc><lastmod>${CONTENT_UPDATED}</lastmod><changefreq>${freq}</changefreq><priority>${pri}</priority></url>`;
     })
     .join('\n');
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
@@ -153,6 +155,8 @@ function route(path: string, url: URL): Response {
   }
   const hub = findHub(path);
   if (hub) return html(hubPage(hub, daySeed()));
+  const landing = findLanding(path);
+  if (landing) return html(landingPage(landing, daySeed()));
   const topic = findTopic(path);
   if (topic) return html(topicPage(topic, daySeed()));
   return html(notFoundPage(), 404);
