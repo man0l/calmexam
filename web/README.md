@@ -20,12 +20,16 @@ web/
   src/index.ts           router: pages, assets, robots/sitemap, www -> apex 301, /api/*
   src/api.ts             /api/health, /api/problems, /api/waitlist (D1), /api/explain (Workers AI + fallback)
   src/site.ts            URLs: hubs /{exam.hubSlug}, topics /{sat-math|ap-calculus|a-level-maths}/{slug}-practice-problems
-  src/content.ts         page copy, FAQs, per-topic key ideas
+  src/content.ts         hub copy, FAQs, brand, CONTENT_UPDATED (sitemap lastmod)
+  src/topic-copy/*       per-topic key idea, common mistakes, exam tip and FAQs
+  src/landing.ts         keyword landing pages (SAT questions/hard/easy, Desmos, AP FRQ/MCQ, exam boards)
   src/html/*             layout + inlined CSS (styles.ts), inline client JS (client.ts), pages, phone mockups
   scripts/smoke.mjs      Node smoke test of dist/worker.js with fake D1/AI
 ```
-Pages: `/`, 3 hubs, 21 topic pages, `/privacy`, `/terms`, `/robots.txt`, `/sitemap.xml`, `/favicon.svg`, 404.
-Practice pages render 10 problems server-side with a daily seed (days since epoch) and are cached
+Pages: `/`, 3 hubs, 9 landing pages, 36 topic pages, `/privacy`, `/terms`, `/robots.txt`, `/sitemap.xml`, `/favicon.svg`, 404.
+Practice pages render a fixed 15-question core set (constant seed, the same on every crawl) and, below it, a
+10-question daily set (days since epoch) that never repeats a core question. Bump `CONTENT_UPDATED` when copy or
+the question bank changes. Pages are cached
 `public, max-age=600`; API responses are `no-store`.
 
 ## Local development
