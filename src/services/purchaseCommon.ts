@@ -1,12 +1,19 @@
 import type { PlanId, PlanOption } from '../types';
 
 export const ENTITLEMENT_ID = 'pro';
-export const TRIAL_DAYS = 7;
+export const DEFAULT_TRIAL_DAYS = 7;
 
 export const DEFAULT_PLANS: PlanOption[] = [
-  { id: 'annual', priceString: '$49.99', price: 49.99, currencyCode: 'USD' },
-  { id: 'monthly', priceString: '$7.99', price: 7.99, currencyCode: 'USD' },
+  { id: 'annual', priceString: '$49.99', price: 49.99, currencyCode: 'USD', trialDays: DEFAULT_TRIAL_DAYS },
+  { id: 'monthly', priceString: '$7.99', price: 7.99, currencyCode: 'USD', trialDays: DEFAULT_TRIAL_DAYS },
 ];
+
+const UNIT_DAYS: Record<string, number> = { DAY: 1, WEEK: 7, MONTH: 30, YEAR: 365 };
+
+export function periodDays(unit: string, count: number): number | null {
+  const days = UNIT_DAYS[unit];
+  return days && count > 0 ? days * count : null;
+}
 
 export const PACKAGE_TYPE: Record<PlanId, string> = {
   annual: 'ANNUAL',

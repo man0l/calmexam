@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 import { Platform } from 'react-native';
-import type { CustomerInfo, PurchasesOffering, PurchasesPackage } from 'react-native-purchases';
+import type { CustomerInfo, PurchasesOffering, PurchasesPackage, PurchasesStoreProduct } from 'react-native-purchases';
 import type { PlanId, PlanOption } from '../types';
-import { DEFAULT_PLANS, ENTITLEMENT_ID, PACKAGE_TYPE, type PurchaseResult } from './purchaseCommon';
+import { DEFAULT_PLANS, ENTITLEMENT_ID, PACKAGE_TYPE, periodDays, type PurchaseResult } from './purchaseCommon';
 
 export { ENTITLEMENT_ID };
 export type { PurchaseResult };
@@ -74,6 +74,35 @@ function packageFor(plan: PlanId): PurchasesPackage | null {
   return offering?.availablePackages.find((p) => (p.packageType as string) === PACKAGE_TYPE[plan]) ?? null;
 }
 
+function trialDaysOf(product: PurchasesStoreProduct): number | null {
+  const free = product.defaultOption?.freePhase;
+  if (free) return periodDays(free.billingPeriod.unit, free.billingPeriod.value);
+  const intro = product.introPrice;
+  if (intro && intro.price === 0) return periodDays(intro.periodUnit, intro.periodNumberOfUnits * Math.max(intro.cycles, 1));
+  return null;
+}
+
+async function withTrialEligibility(plans: PlanOption[]): Promise<PlanOption[]> {
+  if (Platform.OS !== 'ios') return plans;
+  const ids = plans
+    .filter((p) => p.trialDays)
+    .map((p) => packageFor(p.id)?.product.identifier)
+    .filter((id): id is string => !!id);
+  if (!ids.length) return plans;
+  try {
+    const Purchases = getPurchases();
+    const eligibility = await Purchases.checkTrialOrIntroductoryPriceEligibility(ids);
+    return plans.map((p) => {
+      const id = packageFor(p.id)?.product.identifier;
+      const status = id ? eligibility[id]?.status : undefined;
+      return status === Purchases.INTRO_ELIGIBILITY_STATUS.INTRO_ELIGIBILITY_STATUS_ELIGIBLE ? p : { ...p, trialDays: null };
+    });
+  } catch (e) {
+    console.warn('[purchases] trial eligibility check failed', e);
+    return plans.map((p) => ({ ...p, trialDays: null }));
+  }
+}
+
 export async function fetchPlans(): Promise<{ plans: PlanOption[]; error: string | null }> {
   if (stubBilling || !configured) return { plans: DEFAULT_PLANS, error: null };
   try {
@@ -88,9 +117,10 @@ export async function fetchPlans(): Promise<{ plans: PlanOption[]; error: string
         priceString: pkg.product.priceString,
         price: pkg.product.price,
         currencyCode: pkg.product.currencyCode,
+        trialDays: trialDaysOf(pkg.product),
       };
     });
-    return { plans, error: null };
+    return { plans: await withTrialEligibility(plans), error: null };
   } catch (e) {
     console.warn('[purchases] getOfferings failed', e);
     return { plans: DEFAULT_PLANS, error: "Couldn't load plans. Check your connection and try again." };

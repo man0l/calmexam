@@ -39,6 +39,7 @@ export interface PlanOption {
   priceString: string;
   price: number;
   currencyCode: string;
+  trialDays: number | null;
 }
 
 export type SessionKind = 'today' | 'topic' | 'night' | 'demo';
