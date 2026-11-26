@@ -3,6 +3,7 @@ import googlePlayBadge from '../assets/badges/google-play-badge.png';
 import { withAIBotTracking } from 'indiestack-ai-bots';
 import { CORS, handleExplain, handleHealth, handleProblems, handleWaitlist, json } from './api';
 import type { Env } from './env';
+import { challengePage, parseChallenge } from './html/challenge';
 import { hubPage, topicPage } from './html/exam-pages';
 import { landingPage } from './html/landing';
 import { homePage } from './html/home';
@@ -11,6 +12,7 @@ import { notFoundPage, privacyPage, termsPage } from './html/legal';
 import { hasOg, hasScreenPng } from './html/screens';
 import { RAW_BASE, activeManifest, loadManifest, setActiveManifest } from './manifest';
 import { CONTENT_UPDATED } from './content';
+import { problemFromId } from '../../src/engine';
 import { ORIGIN, allPaths, daySeed, findHub, findLanding, findTopic } from './site';
 
 const SECURITY_HEADERS: Record<string, string> = {
@@ -159,5 +161,8 @@ function route(path: string, url: URL): Response {
   if (landing) return html(landingPage(landing, daySeed()));
   const topic = findTopic(path);
   if (topic) return html(topicPage(topic, daySeed()));
+  const challenge = parseChallenge(path);
+  const shared = challenge ? problemFromId(`${challenge.templateId}:${challenge.seed}`) : null;
+  if (shared) return html(challengePage(shared));
   return html(notFoundPage(), 404);
 }

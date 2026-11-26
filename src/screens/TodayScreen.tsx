@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button } from '../components/Button';
 import { Card } from '../components/Card';
@@ -13,6 +14,7 @@ import { formatScore } from '../engine';
 import { useWeakTopics } from '../hooks/useWeakTopics';
 import { daysUntil, formatLong, formatShort, todayKey } from '../services/dates';
 import { accuracy, randomSeed } from '../services/practice';
+import { onReminderTap } from '../services/reminders';
 import { useProfile } from '../store/ProfileContext';
 import { useProgress } from '../store/ProgressContext';
 import { useSubscription } from '../store/SubscriptionContext';
@@ -28,6 +30,10 @@ export function TodayScreen() {
   const goal = plan.problemsPerDay;
   const goalMet = todayCount >= goal;
   const left = Math.max(0, goal - todayCount);
+  const hour = new Date().getHours();
+  const late = hour >= 20 || hour < 5;
+
+  useEffect(() => onReminderTap(() => navigation.navigate('Session', { kind: 'night', seed: randomSeed() })), [navigation]);
 
   const base = weak.map((t, i): Stone['state'] => {
     const acc = accuracy(progress.topics[t.id]);
@@ -94,6 +100,22 @@ export function TodayScreen() {
         </View>
       </HeroCard>
 
+      <Card style={styles.one}>
+        <View style={styles.flex}>
+          <Txt variant="bodyStrong">{late ? 'One problem, then sleep' : 'Short on time?'}</Txt>
+          <Txt variant="small" color="inkMuted">
+            {late ? 'Behind tonight? One verified problem still counts.' : 'One problem from your weakest topic. It still counts.'}
+          </Txt>
+        </View>
+        <Button
+          testID="start-one"
+          label="Just one"
+          variant="secondary"
+          compact
+          onPress={() => navigation.navigate('Session', { kind: 'night', seed: randomSeed() })}
+        />
+      </Card>
+
       <View style={styles.pathHead}>
         <Txt variant="h2">{`Your path to ${formatScore(exam.id, plan.projected.target)}`}</Txt>
         <Txt variant="small" color="inkMuted">
@@ -136,7 +158,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs + 2,
   },
-  hero: { marginBottom: spacing.xxl, gap: spacing.lg },
+  hero: { marginBottom: spacing.lg, gap: spacing.lg },
+  one: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginBottom: spacing.xxl },
   heroRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
   heroText: { flex: 1, gap: spacing.xs },
   heroFoot: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, justifyContent: 'center' },

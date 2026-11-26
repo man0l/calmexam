@@ -14,6 +14,7 @@ export type RootStackParamList = {
   Tabs: NavigatorScreenParams<TabParamList> | undefined;
   Session: SessionParams;
   EditPlan: { field: EditField };
+  Reminder: undefined;
 };
 
 declare global {

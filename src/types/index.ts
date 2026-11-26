@@ -41,7 +41,7 @@ export interface PlanOption {
   currencyCode: string;
 }
 
-export type SessionKind = 'today' | 'topic' | 'demo';
+export type SessionKind = 'today' | 'topic' | 'night' | 'demo';
 
 export interface SessionParams {
   kind: SessionKind;

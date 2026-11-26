@@ -16,6 +16,7 @@ import { useWeakTopics } from '../hooks/useWeakTopics';
 import type { RootStackParamList } from '../navigation/types';
 import { explainMistake, localExplanation, type Explanation } from '../services/api';
 import { resultHaptic } from '../services/haptics';
+import { shareProblem } from '../services/share';
 import {
   buildSimilar,
   buildTodaySession,
@@ -36,6 +37,7 @@ const DEMO_SCROLL_LEAD = 150;
 
 function buildSession(exam: ExamId, params: SessionParams, weak: Topic[], seed: number): Problem[] {
   if (params.kind === 'topic' && params.topicId) return buildTopicSession(exam, params.topicId, seed);
+  if (params.kind === 'night') return buildTodaySession(exam, weak, seed).slice(0, 1);
   return buildTodaySession(exam, weak, seed);
 }
 
@@ -66,14 +68,25 @@ export function PracticeSessionScreen({ navigation, route }: Props) {
   const [similarFor, setSimilarFor] = useState<Set<number>>(() => new Set());
   const [finished, setFinished] = useState(false);
   const [afterY, setAfterY] = useState<number | null>(null);
+  const [shareNote, setShareNote] = useState<string | null>(null);
   const requestId = useRef(0);
 
   const problem = problems[index];
   const leave = () => (navigation.canGoBack() ? navigation.goBack() : navigation.replace('Tabs'));
   const answered = chosen !== null;
   const correct = answered && chosen === problem.answerIndex;
+  const night = params.kind === 'night';
   const title =
-    params.kind === 'topic' && params.topicId ? (getTopic(params.topicId)?.name ?? 'Practice') : 'Today’s session';
+    params.kind === 'topic' && params.topicId
+      ? (getTopic(params.topicId)?.name ?? 'Practice')
+      : night
+        ? 'One problem, then sleep'
+        : 'Today’s session';
+  const missesInRow = (() => {
+    let n = 0;
+    for (let i = results.length - 1; i >= 0 && !results[i]; i--) n++;
+    return n;
+  })();
 
   const choose = (i: number) => {
     if (answered) return;
@@ -95,6 +108,12 @@ export function PracticeSessionScreen({ navigation, route }: Props) {
     }
     setIndex(index + 1);
     setChosen(null);
+    setShareNote(null);
+  };
+
+  const share = async () => {
+    const res = await shareProblem(problem);
+    setShareNote(res === 'copied' ? 'Link copied. Paste it to a friend.' : res === 'failed' ? 'Couldn’t open sharing on this device.' : null);
   };
 
   const explainNow = useCallback(async () => {
@@ -124,8 +143,36 @@ export function PracticeSessionScreen({ navigation, route }: Props) {
     setResults([]);
     setExplain(null);
     setSimilarFor(new Set());
+    setShareNote(null);
     setFinished(false);
   };
+
+  if (finished && night) {
+    const score = results.filter(Boolean).length;
+    return (
+      <ScreenShell
+        header={<TopBar onBack={() => leave()} backIcon="close" />}
+        footer={
+          <>
+            <Button testID="session-done" label="Goodnight" onPress={() => leave()} />
+            <Button label="One more" variant="ghost" onPress={restart} />
+          </>
+        }
+      >
+        <View style={styles.summary}>
+          <Txt variant="h3" color="primary">
+            That counts
+          </Txt>
+          <Txt variant="display">{`${score}/${results.length}`}</Txt>
+          <Txt variant="body" align="center" style={styles.message}>
+            {score === results.length
+              ? 'One solved problem tonight is one more you will recognise on exam day.'
+              : 'You looked at the steps instead of scrolling. That is studying. Sleep on it.'}
+          </Txt>
+        </View>
+      </ScreenShell>
+    );
+  }
 
   if (finished) {
     const score = results.filter(Boolean).length;
@@ -212,6 +259,13 @@ export function PracticeSessionScreen({ navigation, route }: Props) {
           <Txt variant="h3" color={correct ? 'correctEdge' : 'wrongText'}>
             {correct ? 'Correct. Nicely done.' : `Not quite. The verified answer is ${LETTERS[problem.answerIndex]}.`}
           </Txt>
+          {!correct ? (
+            <Txt variant="small" color="inkMuted">
+              {missesInRow >= 2
+                ? 'A few misses in a row is normal on a topic that’s still new. Slow down and fix one shape at a time.'
+                : 'One wrong answer isn’t a pattern. Three like this will fix it.'}
+            </Txt>
+          ) : null}
           <SolutionCard problem={problem} />
           {!correct ? (
             explain ? (
@@ -230,12 +284,23 @@ export function PracticeSessionScreen({ navigation, route }: Props) {
             )
           ) : null}
           {!similarFor.has(index) ? (
-            <Button label={`Practise ${SIMILAR_COUNT} similar`} variant="ghost" onPress={addSimilar} />
+            <Button
+              testID="fix-it"
+              label={correct ? `Practise ${SIMILAR_COUNT} similar` : `Fix it: ${SIMILAR_COUNT} like this`}
+              variant={correct ? 'ghost' : 'secondary'}
+              onPress={addSimilar}
+            />
           ) : (
             <Txt variant="caption" color="inkMuted" align="center">
               {`${SIMILAR_COUNT} similar problems added next`}
             </Txt>
           )}
+          <Button testID="share-problem" label="Send this to a friend" variant="ghost" onPress={share} />
+          {shareNote ? (
+            <Txt variant="caption" color="inkMuted" align="center">
+              {shareNote}
+            </Txt>
+          ) : null}
         </View>
       ) : null}
     </ScreenShell>
