@@ -3,7 +3,7 @@
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
 // Build a copy with an empty build-time manifest so the "no manifest" checks don't depend on committed screenshots.
@@ -12,7 +12,7 @@ const smokeOut = join(here, '../dist/worker-smoke.js');
 mkdirSync(join(here, '../dist'), { recursive: true });
 writeFileSync(emptyManifest, JSON.stringify({ screens: [], og: false, version: '' }));
 execFileSync(process.execPath, [join(here, '../build.mjs')], { env: { ...process.env, SCREENS_MANIFEST: emptyManifest, OUTFILE: smokeOut }, stdio: 'ignore' });
-const worker = (await import(smokeOut)).default;
+const worker = (await import(pathToFileURL(smokeOut).href)).default;
 const previewDir = join(here, '../dist/preview');
 mkdirSync(previewDir, { recursive: true });
 
@@ -172,6 +172,13 @@ for (const p of landings) {
   const nfh = await nf.text();
   check('404', nf.status === 404 && nfh.includes('noindex'));
   writeFileSync(join(previewDir, '404.html'), nfh);
+  const ch = await call('/c/sat-linear-solve/4821');
+  const chh = await ch.text();
+  check('challenge 200', ch.status === 200 && countProblems(chh) === 1 && chh.includes('data-share') && chh.includes('noindex'));
+  check('challenge stable', chh === (await (await call('/c/sat-linear-solve/4821')).text()));
+  writeFileSync(join(previewDir, 'challenge.html'), chh);
+  check('challenge unknown template 404', (await call('/c/nope-template/12')).status === 404);
+  check('challenge bad seed 404', (await call('/c/sat-linear-solve/abc')).status === 404);
   const www = await call('/sat-math-practice-test?x=1', {}, 'www.calmexam.com');
   check('www redirect', www.status === 301 && www.headers.get('location') === 'https://calmexam.com/sat-math-practice-test?x=1');
   const slash = await call('/privacy/');
@@ -296,7 +303,7 @@ const postJson = (path, body) =>
   const out = join(here, '../dist/worker-manifest-test.js');
   writeFileSync(tmp, JSON.stringify({ screens: ['today'], og: false, version: 'build1' }));
   execFileSync(process.execPath, [join(here, '../build.mjs')], { env: { ...process.env, SCREENS_MANIFEST: tmp, OUTFILE: out } });
-  const w2 = (await import(out)).default;
+  const w2 = (await import(pathToFileURL(out).href)).default;
   upstream.manifestThrows = true;
   {
     const h = await (await get(w2, '/')).text();

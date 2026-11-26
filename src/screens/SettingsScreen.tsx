@@ -1,6 +1,6 @@
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import Constants from 'expo-constants';
-import type { ReactNode } from 'react';
+import { useCallback, useState, type ReactNode } from 'react';
 import { Linking, Pressable, StyleSheet, View } from 'react-native';
 import { Button } from '../components/Button';
 import { Card } from '../components/Card';
@@ -11,6 +11,7 @@ import { confirmAction } from '../services/confirm';
 import { daysUntil, formatLong } from '../services/dates';
 import { PRIVACY_URL, TERMS_URL } from '../services/legal';
 import { presentCustomerCenter } from '../services/purchases';
+import { disableReminder, loadReminder, REMINDER_HOUR, REMINDERS_SUPPORTED } from '../services/reminders';
 import { useProfile } from '../store/ProfileContext';
 import { useProgress } from '../store/ProgressContext';
 import { useSubscription } from '../store/SubscriptionContext';
@@ -65,6 +66,28 @@ export function SettingsScreen() {
   const { reset } = useProgress();
   const { subscribed, openPaywall, restore, message, purchasing } = useSubscription();
   const version = Constants.expoConfig?.version ?? '1.0.0';
+  const [reminderOn, setReminderOn] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      let live = true;
+      loadReminder().then((r) => live && setReminderOn(r.enabled));
+      return () => {
+        live = false;
+      };
+    }, []),
+  );
+
+  const onReminder = async () => {
+    if (!reminderOn) {
+      navigation.navigate('Reminder');
+      return;
+    }
+    const ok = await confirmAction('Turn off the evening reminder?', 'You can turn it back on here anytime.', 'Turn off');
+    if (!ok) return;
+    await disableReminder();
+    setReminderOn(false);
+  };
 
   const onReset = async () => {
     const ok = await confirmAction(
@@ -99,6 +122,17 @@ export function SettingsScreen() {
           last
         />
       </Section>
+
+      {REMINDERS_SUPPORTED ? (
+        <Section title="REMINDERS">
+          <Row
+            label="Evening problem"
+            value={reminderOn ? `${REMINDER_HOUR - 12}:00 pm` : 'Off'}
+            onPress={onReminder}
+            last
+          />
+        </Section>
+      ) : null}
 
       <Section title="CALMEXAM PRO">
         <View style={styles.pro}>

@@ -4,6 +4,7 @@ export const STORAGE_KEYS = {
   profile: 'calmexam-profile-v1',
   progress: 'calmexam-progress-v1',
   entitlement: 'calmexam-entitlement-v1',
+  reminder: 'calmexam-reminder-v1',
 } as const;
 
 export async function loadJson<T>(key: string): Promise<T | null> {

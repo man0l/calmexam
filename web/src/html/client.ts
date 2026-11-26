@@ -40,6 +40,13 @@ function score(list){
 }
 d.addEventListener("click",function(e){
   var t=e.target.closest?e.target.closest("button"):null;if(!t)return;
+  if(t.hasAttribute("data-share")){
+    var su=location.origin+t.dataset.url,st=t.dataset.text||"",sm=d.querySelector("[data-share-msg]");
+    if(navigator.share){navigator.share({title:d.title,text:st,url:su}).catch(function(){});return}
+    if(navigator.clipboard){navigator.clipboard.writeText(st+" "+su).then(function(){if(sm)sm.textContent="Link copied. Paste it to a friend."}).catch(function(){if(sm)sm.textContent=su})}
+    else if(sm)sm.textContent=su;
+    return;
+  }
   var p=t.closest(".problem");
   if(t.classList.contains("choice")&&p&&!p.dataset.done){
     var i=+t.dataset.i,a=+p.dataset.answer,ok=i===a,bs=p.querySelectorAll(".choice");

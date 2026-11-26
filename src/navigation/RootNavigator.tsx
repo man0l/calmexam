@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { EditPlanScreen } from '../screens/EditPlanScreen';
 import { PracticeSessionScreen } from '../screens/PracticeSessionScreen';
+import { ReminderScreen } from '../screens/ReminderScreen';
 import { colors } from '../theme';
 import type { SessionParams } from '../types';
 import { TabNavigator } from './TabNavigator';
@@ -27,6 +28,7 @@ export function RootNavigator({ initialTab, initialSession }: Props) {
         options={{ animation: 'slide_from_bottom', gestureEnabled: false }}
       />
       <Stack.Screen name="EditPlan" component={EditPlanScreen} />
+      <Stack.Screen name="Reminder" component={ReminderScreen} options={{ animation: 'slide_from_bottom' }} />
     </Stack.Navigator>
   );
 }
