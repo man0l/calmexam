@@ -8,7 +8,7 @@ import { Txt } from '../components/Txt';
 import { formatScore } from '../engine';
 import { addDays, formatShort, todayKey } from '../services/dates';
 import { PRIVACY_URL, TERMS_URL } from '../services/legal';
-import { perMonthLabel, TRIAL_DAYS } from '../services/purchaseCommon';
+import { perMonthLabel } from '../services/purchaseCommon';
 import { useProfile } from '../store/ProfileContext';
 import { FREE_EXPLANATIONS_PER_DAY } from '../store/ProgressContext';
 import { useSubscription } from '../store/SubscriptionContext';
@@ -16,29 +16,34 @@ import { colors, layout, radii, spacing } from '../theme';
 import type { PlanId, PlanOption } from '../types';
 
 const STORE = Platform.select({ ios: 'App Store', android: 'Google Play', default: 'app store' });
-const LAST_FREE_DAY = TRIAL_DAYS - 2;
 
-function timeline(plan: PlanOption): { icon: IconName; title: string; body: string }[] {
+function timeline(plan: PlanOption, trialDays: number): { icon: IconName; title: string; body: string }[] {
   const today = todayKey();
   const period = plan.id === 'annual' ? 'year' : 'month';
   return [
     { icon: 'lock', title: 'Today', body: 'Your full plan and unlimited explanations unlock. No payment now.' },
     {
       icon: 'calendar',
-      title: formatShort(addDays(today, LAST_FREE_DAY)),
+      title: formatShort(addDays(today, Math.max(trialDays - 2, 1))),
       body: `Still free. Cancel in ${STORE} subscriptions in a couple of taps.`,
     },
     {
       icon: 'card',
-      title: formatShort(addDays(today, TRIAL_DAYS)),
+      title: formatShort(addDays(today, trialDays)),
       body: `You pay ${plan.priceString} a ${period}, unless you cancel before.`,
     },
   ];
 }
 
+function planCaption(plan: PlanOption): string {
+  const monthly = perMonthLabel(plan);
+  const trial = plan.trialDays ? `${plan.trialDays} days free` : null;
+  if (monthly && trial) return `${monthly} · ${trial}`;
+  return monthly ?? trial ?? 'Billed monthly';
+}
+
 function PlanRow({ plan, selected, onPress }: { plan: PlanOption; selected: boolean; onPress: () => void }) {
   const annual = plan.id === 'annual';
-  const monthly = perMonthLabel(plan);
   return (
     <Pressable
       testID={`plan-${plan.id}`}
@@ -60,7 +65,7 @@ function PlanRow({ plan, selected, onPress }: { plan: PlanOption; selected: bool
           ) : null}
         </View>
         <Txt variant="caption" color="inkMuted">
-          {annual && monthly ? `${monthly} · ${TRIAL_DAYS} days free` : `${TRIAL_DAYS} days free`}
+          {planCaption(plan)}
         </Txt>
       </View>
       <View style={styles.price}>
@@ -88,6 +93,10 @@ export function PaywallScreen() {
   const current = plans.find((p) => p.id === selected) ?? plans[0];
   const target = formatScore(exam.id, plan.projected.target);
   const monthly = perMonthLabel(current);
+  const trialDays = current.trialDays;
+  const billing = `${current.priceString} a ${selected === 'annual' ? 'year' : 'month'}${
+    selected === 'annual' && monthly ? ` (${monthly})` : ''
+  }`;
 
   return (
     <ScreenShell
@@ -106,15 +115,22 @@ export function PaywallScreen() {
       }
       footer={
         <>
-          <View style={styles.noPay}>
-            <Icon name="check" color="primary" size={layout.iconSmall} />
-            <Txt variant="label">No payment due now</Txt>
-          </View>
-          <Button testID="paywall-subscribe" label="Start my free trial" onPress={() => subscribe(selected)} loading={purchasing} />
+          {trialDays ? (
+            <View style={styles.noPay}>
+              <Icon name="check" color="primary" size={layout.iconSmall} />
+              <Txt variant="label">No payment due now</Txt>
+            </View>
+          ) : null}
+          <Button
+            testID="paywall-subscribe"
+            label={trialDays ? 'Start my free trial' : 'Subscribe'}
+            onPress={() => subscribe(selected)}
+            loading={purchasing}
+          />
           <Txt variant="caption" color="inkMuted" align="center">
-            {`${TRIAL_DAYS} days free, then ${current.priceString} a ${selected === 'annual' ? 'year' : 'month'}${
-              selected === 'annual' && monthly ? ` (${monthly})` : ''
-            }. Cancel anytime.`}
+            {trialDays
+              ? `${trialDays} days free, then ${billing}. Cancel anytime.`
+              : `${billing}. Renews automatically. Cancel anytime.`}
           </Txt>
           <View style={styles.links}>
             <Pressable onPress={() => Linking.openURL(TERMS_URL)} accessibilityRole="link" style={styles.link}>
@@ -132,30 +148,34 @@ export function PaywallScreen() {
       }
     >
       <View style={styles.head}>
-        <Txt variant="title" align="center">{`Start your ${TRIAL_DAYS}-day free trial`}</Txt>
+        <Txt variant="title" align="center">
+          {trialDays ? `Start your ${trialDays}-day free trial` : 'Unlock your full plan'}
+        </Txt>
         <Txt variant="body" color="inkMuted" align="center">
           {`Your plan to ${target} on ${exam.shortName} by ${formatShort(profile.examDate)} is ready.`}
         </Txt>
       </View>
 
-      <View style={styles.timeline}>
-        {timeline(current).map((t, i, all) => (
-          <View key={t.icon} style={styles.tlRow}>
-            <View style={styles.tlRail}>
-              <View style={[styles.tlIcon, i === 0 && styles.tlIconOn]}>
-                <Icon name={t.icon} color={i === 0 ? 'onPrimary' : 'primary'} size={layout.iconSmall} />
+      {trialDays ? (
+        <View style={styles.timeline}>
+          {timeline(current, trialDays).map((t, i, all) => (
+            <View key={t.icon} style={styles.tlRow}>
+              <View style={styles.tlRail}>
+                <View style={[styles.tlIcon, i === 0 && styles.tlIconOn]}>
+                  <Icon name={t.icon} color={i === 0 ? 'onPrimary' : 'primary'} size={layout.iconSmall} />
+                </View>
+                {i < all.length - 1 ? <View style={styles.tlLine} /> : null}
               </View>
-              {i < all.length - 1 ? <View style={styles.tlLine} /> : null}
+              <View style={styles.tlText}>
+                <Txt variant="bodyStrong">{t.title}</Txt>
+                <Txt variant="small" color="inkMuted">
+                  {t.body}
+                </Txt>
+              </View>
             </View>
-            <View style={styles.tlText}>
-              <Txt variant="bodyStrong">{t.title}</Txt>
-              <Txt variant="small" color="inkMuted">
-                {t.body}
-              </Txt>
-            </View>
-          </View>
-        ))}
-      </View>
+          ))}
+        </View>
+      ) : null}
 
       <View style={styles.plans}>
         {plans.map((p) => (
