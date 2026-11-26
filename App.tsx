@@ -14,6 +14,7 @@ import { RootNavigator } from './src/navigation/RootNavigator';
 import type { TabParamList } from './src/navigation/types';
 import { OnboardingFlow, type OnboardingStep } from './src/screens/onboarding/OnboardingFlow';
 import { PaywallScreen } from './src/screens/PaywallScreen';
+import { askTracking, startAttribution } from './src/services/attribution';
 import { readDemoInsets, type DemoConfig, type DemoId } from './src/services/demo';
 import { applyDemo } from './src/services/demoSeed';
 import { DemoReadyContext } from './src/store/DemoReadyContext';
@@ -58,6 +59,11 @@ function Root({ demo }: { demo: DemoConfig | null }) {
     if (demo?.id === 'paywall') openPaywall();
   }, [demo, openPaywall]);
 
+  const onboarded = profileReady && profile.onboarded;
+  useEffect(() => {
+    if (onboarded && !demo) void startAttribution();
+  }, [onboarded, demo]);
+
   if (!profileReady || !progressReady || !subReady) return <View style={styles.root} />;
 
   const id = demo?.id;
@@ -77,7 +83,9 @@ function Root({ demo }: { demo: DemoConfig | null }) {
             seed={demo ? DEMO_SEED : undefined}
             placementIndex={id === 'placement' ? 1 : undefined}
             onComplete={() => {
-              if (!subscribed) openPaywall();
+              if (subscribed) return;
+              if (demo) openPaywall();
+              else void askTracking().finally(openPaywall);
             }}
           />
         )}

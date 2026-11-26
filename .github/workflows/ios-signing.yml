@@ -65,6 +65,7 @@ jobs:
       EXPO_PUBLIC_API_BASE_URL: ${{ secrets.EXPO_PUBLIC_API_BASE_URL || 'https://calmexam.manol-trendafilov.workers.dev/api' }}
       EXPO_PUBLIC_REVENUECAT_KEY: ${{ secrets.EXPO_PUBLIC_REVENUECAT_KEY }}
       EXPO_PUBLIC_REVENUECAT_IOS_KEY: ${{ secrets.EXPO_PUBLIC_REVENUECAT_IOS_KEY }}
+      EXPO_PUBLIC_APPSFLYER_DEV_KEY: ${{ secrets.EXPO_PUBLIC_APPSFLYER_DEV_KEY }}
       IOS_BUILD_NUMBER: ${{ github.run_number }}
     steps:
       - uses: actions/checkout@v5
