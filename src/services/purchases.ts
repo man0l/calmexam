@@ -29,7 +29,25 @@ export function isStubBilling(): boolean {
   return stubBilling;
 }
 
-export async function configurePurchases(): Promise<boolean> {
+let configuring: Promise<boolean> | null = null;
+
+export function configurePurchases(): Promise<boolean> {
+  if (!configuring) configuring = doConfigure();
+  return configuring;
+}
+
+export async function linkAppsFlyer(appsflyerId: string): Promise<void> {
+  if (stubBilling || !(await configurePurchases())) return;
+  try {
+    const Purchases = getPurchases();
+    await Purchases.collectDeviceIdentifiers();
+    await Purchases.setAppsflyerID(appsflyerId);
+  } catch (e) {
+    console.warn('[purchases] AppsFlyer link failed', e);
+  }
+}
+
+async function doConfigure(): Promise<boolean> {
   if (stubBilling) return true;
   if (configured) return true;
   if (!API_KEY) {
