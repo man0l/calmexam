@@ -146,6 +146,7 @@
       ],
       "expo-font",
       "./plugins/withoutPushEntitlement",
+      "./plugins/withNativeDebugSymbols",
       "expo-notifications",
       "react-native-appsflyer",
       [
